@@ -1,0 +1,20 @@
+{
+	"name": "Full_React_Auth_Graphql",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "nodemon index"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"apollo-server": "^2.10.0",
+		"bcryptjs": "^2.4.3",
+		"config": "^3.2.5",
+		"graphql": "^14.6.0",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^5.8.11"
+	}
+}
