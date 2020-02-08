@@ -53,6 +53,7 @@ export const ADD_POST = gql`
 			body
 			createdAt
 			username
+			userEmail
 			likes {
 				id
 				username

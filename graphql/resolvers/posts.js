@@ -33,7 +33,7 @@ module.exports = {
 			const user = checkAuth(context);
 
 			if (args.body.trim() === '') {
-				throw new Error('Post body is not provided');
+				throw new UserInputError('Post body is not provided');
 			}
 
 			const newPost = new Post({

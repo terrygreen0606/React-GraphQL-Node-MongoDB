@@ -32,7 +32,6 @@ const DeleteButton = ({ postId, commentId, callback }) => {
 					query: FETCH_POSTS_QUERY,
 					data: { getPosts: postsAfterDeleted }
 				});
-
 				// If called from single post, redirect to posts page
 				if (callback) callback();
 			}

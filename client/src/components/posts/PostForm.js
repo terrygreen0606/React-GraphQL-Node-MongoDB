@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { Form, Button } from 'semantic-ui-react';
 
@@ -9,6 +9,8 @@ const PostForm = () => {
 	const { values, onChange, onSubmit } = useForm(createPostCallback, {
 		body: ''
 	});
+
+	const [bodyError, setBodyError] = useState(null);
 
 	const [createPost, { error }] = useMutation(ADD_POST, {
 		variables: values,
@@ -28,6 +30,9 @@ const PostForm = () => {
 	});
 
 	function createPostCallback() {
+		if (values.body === '') {
+			return setBodyError('Post content is required');
+		}
 		createPost();
 	}
 
@@ -41,7 +46,7 @@ const PostForm = () => {
 						name="body"
 						onChange={onChange}
 						value={values.body}
-						error={error ? true : false}
+						error={error || bodyError ? true : false}
 					/>
 					<Button type="submit" color="teal">
 						Submit
@@ -52,6 +57,13 @@ const PostForm = () => {
 				<div className="ui error message" style={{ marginBottom: 20 }}>
 					<ul className="list">
 						<li>{error.graphQLErrors[0].message}</li>
+					</ul>
+				</div>
+			)}
+			{bodyError && (
+				<div className="ui error message" style={{ marginBottom: 20 }}>
+					<ul className="list">
+						<li>{bodyError}</li>
 					</ul>
 				</div>
 			)}

@@ -4,9 +4,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "nodemon index",
-		"serve": "node index",
-		"client": "cd client && npm start"
+		"start": "node index",
+		"serve": "nodemon index",
+		"client": "cd client && npm start",
+		"dev": "npm start && npm run client"
 	},
 	"keywords": [],
 	"author": "",
