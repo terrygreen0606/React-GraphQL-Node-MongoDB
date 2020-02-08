@@ -7,10 +7,11 @@ import './App.css';
 import { UserProvider } from './context/UserContext';
 import AuthRoutes from './custom/AuthRoutes';
 
-import Home from './pages/Home';
+import Posts from './pages/Posts';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MenuBar from './components/MenuBar';
+import SinglePost from './components/posts/SinglePost';
 
 function App() {
 	return (
@@ -19,12 +20,18 @@ function App() {
 				<Container>
 					<MenuBar />
 					<Switch>
-						<Route exact path="/" component={Home} />
+						<Route exact path="/posts" component={Posts} />
 						<AuthRoutes exact path="/login" component={Login} />
 						<AuthRoutes
 							exact
 							path="/register"
 							component={Register}
+						/>
+
+						<Route
+							exact
+							path="/posts/:postId"
+							component={SinglePost}
 						/>
 					</Switch>
 				</Container>

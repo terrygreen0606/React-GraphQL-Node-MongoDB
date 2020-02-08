@@ -9,7 +9,7 @@ const AuthRoutes = ({ component: Component, ...rest }) => {
 		<Route
 			{...rest}
 			render={props =>
-				user ? <Redirect to="/" /> : <Component {...props} />
+				user ? <Redirect to="/posts" /> : <Component {...props} />
 			}
 		/>
 	);

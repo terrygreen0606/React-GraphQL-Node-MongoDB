@@ -1,11 +1,12 @@
 {
-	"name": "Full_React_Auth_Graphql",
+	"name": "full-react-auth-graphql",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
 		"start": "nodemon index",
-		"serve": "node index"
+		"serve": "node index",
+		"client": "cd client && npm start"
 	},
 	"keywords": [],
 	"author": "",

@@ -18,7 +18,7 @@ const Login = props => {
 		// Comes from graphql server
 		update(proxy, result) {
 			context.login(result.data.login);
-			props.history.push('/');
+			props.history.push('/posts');
 		},
 		onError(err) {
 			setErrors(err.graphQLErrors[0].extensions.exception.errors);

@@ -5,14 +5,12 @@ import { Card, Icon, Image, Button, Label } from 'semantic-ui-react';
 
 import { UserContext } from '../../context/UserContext';
 import LikeButton from './LikeButton';
+import DeleteButton from './DeleteButton';
+import Tooltip from '../../custom/Tooltip';
 
 const PostCard = ({ post }) => {
 	const { user } = useContext(UserContext);
 	const { body, createdAt, id, username, userEmail, commentsCount } = post;
-
-	const deletePost = () => {
-		console.log('delete post');
-	};
 
 	return (
 		<Card fluid>
@@ -31,19 +29,19 @@ const PostCard = ({ post }) => {
 			<Card.Content extra>
 				<LikeButton post={post} user={user} />
 
-				<Button as={Link} to={`/posts/${id}`} labelPosition="right">
-					<Button color="blue" basic>
-						<Icon name="comments" />
+				<Tooltip content="Comment on Post">
+					<Button as={Link} to={`/posts/${id}`} labelPosition="right">
+						<Button color="blue" basic>
+							<Icon name="comments" />
+						</Button>
+						<Label basic color="blue" pointing="left">
+							{commentsCount}
+						</Label>
 					</Button>
-					<Label basic color="blue" pointing="left">
-						{commentsCount}
-					</Label>
-				</Button>
+				</Tooltip>
 
 				{user && user.email === userEmail && (
-					<Button color="red" onClick={deletePost} floated="right">
-						<Icon name="trash" style={{ margin: 0 }} />
-					</Button>
+					<DeleteButton postId={id} />
 				)}
 			</Card.Content>
 		</Card>

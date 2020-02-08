@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { Button, Label, Icon } from 'semantic-ui-react';
 
 import { LIKE_P0ST } from '../../graphql/postsQuery';
+import Tooltip from '../../custom/Tooltip';
 
 const LikeButton = ({ post, user }) => {
 	const { id, likes, likesCount } = post;
@@ -40,7 +41,10 @@ const LikeButton = ({ post, user }) => {
 
 	return (
 		<Button as="div" labelPosition="right" onClick={likePost}>
-			{likeBtn}
+			<Tooltip content={liked ? 'I Dislike this' : 'I like this'}>
+				{likeBtn}
+			</Tooltip>
+
 			<Label basic color="teal" pointing="left">
 				{likesCount}
 			</Label>
