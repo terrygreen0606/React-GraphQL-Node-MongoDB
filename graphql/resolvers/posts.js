@@ -32,6 +32,10 @@ module.exports = {
 		async createPost(_, args, context) {
 			const user = checkAuth(context);
 
+			if (args.body.trim() === '') {
+				throw new Error('Post body is not provided');
+			}
+
 			const newPost = new Post({
 				body: args.body,
 				user: user.id,
