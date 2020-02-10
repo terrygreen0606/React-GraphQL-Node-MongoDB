@@ -4,6 +4,7 @@ const config = require('config');
 const { UserInputError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
+const checkAuth = require('../../utilizers/checkAuth');
 const {
 	validateRegisterInput,
 	validateLoginInput
@@ -22,6 +23,21 @@ const generateToken = user => {
 };
 
 module.exports = {
+	Query: {
+		async getUser(_, args, context) {
+			checkAuth(context);
+			try {
+				const user = await User.findById(args.userId);
+				if (user) {
+					return user;
+				} else {
+					throw new Error('User not found');
+				}
+			} catch (err) {
+				throw new Error(err);
+			}
+		}
+	},
 	Mutation: {
 		async login(_, args) {
 			const { errors, valid } = validateLoginInput(args);

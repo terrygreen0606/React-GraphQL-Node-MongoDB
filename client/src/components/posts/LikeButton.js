@@ -20,7 +20,10 @@ const LikeButton = ({ post, user }) => {
 	}, [user, likes]);
 
 	const [likePost] = useMutation(LIKE_P0ST, {
-		variables: { postId: id }
+		variables: { postId: id },
+		onError(error) {
+			console.log(error.graphQLErrors[0].message);
+		}
 	});
 
 	const likeBtn = user ? (

@@ -35,3 +35,12 @@ export const LOGIN_USER = gql`
 		}
 	}
 `;
+
+export const LOAD_USER = gql`
+	query getUser($userId: ID!) {
+		getUser(userId: $userId) {
+			email
+			username
+		}
+	}
+`;

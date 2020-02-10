@@ -6,12 +6,14 @@ import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 import { UserProvider } from './context/UserContext';
 import AuthRoutes from './custom/AuthRoutes';
+import ProtectedRoutes from './custom/ProtectedRoutes';
 
 import Posts from './pages/Posts';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MenuBar from './components/MenuBar';
 import SinglePost from './components/posts/SinglePost';
+import Profile from './components/profile/Profile';
 
 function App() {
 	return (
@@ -20,7 +22,6 @@ function App() {
 				<Container>
 					<MenuBar />
 					<Switch>
-						<Route exact path="/posts" component={Posts} />
 						<AuthRoutes exact path="/login" component={Login} />
 						<AuthRoutes
 							exact
@@ -28,10 +29,17 @@ function App() {
 							component={Register}
 						/>
 
+						<Route exact path="/posts" component={Posts} />
 						<Route
 							exact
 							path="/posts/:postId"
 							component={SinglePost}
+						/>
+
+						<ProtectedRoutes
+							exact
+							path="/profile"
+							component={Profile}
 						/>
 					</Switch>
 				</Container>

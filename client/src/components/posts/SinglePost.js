@@ -37,7 +37,7 @@ const SinglePost = props => {
 	});
 
 	const deleteButtonCallback = () => {
-		props.history.push('/');
+		props.history.push('/posts');
 	};
 
 	let markUp;

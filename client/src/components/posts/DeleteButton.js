@@ -14,10 +14,9 @@ const DeleteButton = ({ postId, commentId, callback }) => {
 
 	const mutation = commentId ? DELETE_COMMENT : DELETE_POST;
 
-	const [deletePostOrComment, { error }] = useMutation(mutation, {
+	const [deletePostOrComment] = useMutation(mutation, {
 		variables: { postId, commentId },
 		update(proxy) {
-			console.log(error);
 			setConfirmOpen(false);
 
 			if (!commentId) {
@@ -35,6 +34,9 @@ const DeleteButton = ({ postId, commentId, callback }) => {
 				// If called from single post, redirect to posts page
 				if (callback) callback();
 			}
+		},
+		onError(err) {
+			console.log(err);
 		}
 	});
 

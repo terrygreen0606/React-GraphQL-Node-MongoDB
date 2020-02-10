@@ -40,6 +40,7 @@ module.exports = gql`
 	}
 
 	type Query {
+		getUser(userId: ID!): User
 		getPosts: [Post]
 		getPost(postId: ID!): Post
 	}

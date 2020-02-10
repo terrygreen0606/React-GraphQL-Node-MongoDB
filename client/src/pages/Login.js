@@ -21,6 +21,8 @@ const Login = props => {
 			props.history.push('/posts');
 		},
 		onError(err) {
+			console.log(err.graphQLErrors[0]);
+			// console.log(err.graphQLErrors[0].extensions.exception.errors);
 			setErrors(err.graphQLErrors[0].extensions.exception.errors);
 		},
 		variables: values

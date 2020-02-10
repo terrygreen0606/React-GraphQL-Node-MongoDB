@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu } from 'semantic-ui-react';
+import { Menu, Dropdown, Icon } from 'semantic-ui-react';
 
 import { UserContext } from '../context/UserContext';
 
@@ -15,8 +15,23 @@ const MenuBar = () => {
 	const links = user ? (
 		<>
 			<Menu.Menu position="right">
-				<Menu.Item name={user.username} as={Link} to="/posts" />
-				<Menu.Item name="logout" onClick={logout} />
+				<Dropdown
+					text={user.username}
+					pointing
+					className="link item"
+					icon="options"
+				>
+					<Dropdown.Menu>
+						<Dropdown.Item as={Link} to="/profile">
+							<Icon name="user" />
+							Profile
+						</Dropdown.Item>
+						<Dropdown.Item onClick={logout} as={Link} to="/">
+							<Icon name="sign-out" />
+							Logout
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			</Menu.Menu>
 		</>
 	) : (
