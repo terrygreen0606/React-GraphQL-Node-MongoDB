@@ -11,7 +11,7 @@ const pubsub = new PubSub();
 const server = new ApolloServer({
 	typeDefs,
 	resolvers,
-	// Context gets the http requests
+	// Context gets the http requests like headers
 	context: ({ req }) => ({ req, pubsub })
 });
 

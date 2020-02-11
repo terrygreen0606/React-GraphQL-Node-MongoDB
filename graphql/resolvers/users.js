@@ -25,6 +25,7 @@ const generateToken = user => {
 module.exports = {
 	Query: {
 		async getUser(_, args, context) {
+			// Check if the user is logged in with jwt
 			checkAuth(context);
 			try {
 				const user = await User.findById(args.userId);
