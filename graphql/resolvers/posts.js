@@ -1,9 +1,22 @@
 const { AuthenticationError, UserInputError } = require('apollo-server');
 
 const Post = require('../../models/PostModel');
+const User = require('../../models/UserModel');
 const checkAuth = require('../../utilizers/checkAuth');
 
 module.exports = {
+	Post: {
+		likesCount: parent => parent.likes.length,
+		commentsCount: parent => parent.comments.length,
+		user: async parent => {
+			try {
+				const user = await User.findById(parent.userId);
+				return user;
+			} catch (err) {
+				throw new Error(err);
+			}
+		}
+	},
 	Query: {
 		async getPosts() {
 			try {
@@ -17,6 +30,7 @@ module.exports = {
 		async getPost(_, args) {
 			try {
 				const post = await Post.findById(args.postId);
+
 				if (post) {
 					return post;
 				} else {
@@ -38,7 +52,7 @@ module.exports = {
 
 			const newPost = new Post({
 				body: args.body,
-				user: user.id,
+				userId: user.id,
 				username: user.username,
 				userEmail: user.email,
 				createdAt: new Date().toISOString()

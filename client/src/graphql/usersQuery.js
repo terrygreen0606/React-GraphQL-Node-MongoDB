@@ -20,6 +20,7 @@ export const REGISTER_USER = gql`
 			username
 			createdAt
 			token
+			roleType
 		}
 	}
 `;
@@ -41,6 +42,18 @@ export const LOAD_USER = gql`
 		getUser(userId: $userId) {
 			email
 			username
+		}
+	}
+`;
+
+export const LOAD_USERS = gql`
+	{
+		getUsers {
+			id
+			username
+			email
+			createdAt
+			roleType
 		}
 	}
 `;

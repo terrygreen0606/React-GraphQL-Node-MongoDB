@@ -5,16 +5,17 @@ module.exports = gql`
 	type Post {
 		id: ID!
 		body: String!
-		username: String!
-		userEmail: String!
+		user: User
+		userId: String!
 		createdAt: String!
-		comments: [Comment]!
-		likes: [Like]!
-		likesCount: Int!
-		commentsCount: Int!
+		comments: [Comment]
+		likes: [Like]
+		likesCount: Int
+		commentsCount: Int
 	}
 	type Comment {
 		id: ID!
+		userId: ID!
 		createdAt: String!
 		username: String!
 		body: String!
@@ -29,7 +30,10 @@ module.exports = gql`
 		username: String!
 		email: String!
 		token: String!
+		roleType: Int!
 		createdAt: String!
+		posts: [Post]
+		comments: [Comment]
 	}
 
 	input RegisterInput {
@@ -40,6 +44,7 @@ module.exports = gql`
 	}
 
 	type Query {
+		getUsers: [User]
 		getUser(userId: ID!): User
 		getPosts: [Post]
 		getPost(postId: ID!): Post

@@ -14,6 +14,7 @@ import Register from './pages/Register';
 import MenuBar from './components/MenuBar';
 import SinglePost from './components/posts/SinglePost';
 import Profile from './components/profile/Profile';
+import UsersTable from './components/admin/UsersTable';
 
 function App() {
 	return (
@@ -40,6 +41,12 @@ function App() {
 							exact
 							path="/profile"
 							component={Profile}
+						/>
+
+						<Route
+							exact
+							path="/admin/users"
+							component={UsersTable}
 						/>
 					</Switch>
 				</Container>

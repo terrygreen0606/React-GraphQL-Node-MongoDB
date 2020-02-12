@@ -4,6 +4,7 @@ const config = require('config');
 const { UserInputError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
+const Post = require('../../models/PostModel');
 const checkAuth = require('../../utilizers/checkAuth');
 const {
 	validateRegisterInput,
@@ -23,12 +24,32 @@ const generateToken = user => {
 };
 
 module.exports = {
+	User: {
+		posts: async parent => {
+			try {
+				const posts = await Post.find({ userId: parent.id });
+				return posts;
+			} catch (err) {
+				throw new Error(err);
+			}
+		}
+	},
 	Query: {
+		async getUsers(_, __, context) {
+			checkAuth(context);
+			try {
+				const users = await User.find().sort({ createdAt: -1 });
+				return users;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
 		async getUser(_, args, context) {
 			// Check if the user is logged in with jwt
 			checkAuth(context);
 			try {
 				const user = await User.findById(args.userId);
+
 				if (user) {
 					return user;
 				} else {
