@@ -11,7 +11,6 @@ import Tooltip from '../../custom/Tooltip';
 const PostCard = ({ post }) => {
 	const authUser = useContext(UserContext).user;
 	const { body, createdAt, id, user, commentsCount } = post;
-
 	return (
 		<Card fluid>
 			<Card.Content>
@@ -20,7 +19,9 @@ const PostCard = ({ post }) => {
 					size="mini"
 					src="https://react.semantic-ui.com/images/avatar/large/steve.jpg"
 				/>
-				<Card.Header>{user.username}</Card.Header>
+				<Card.Header>
+					{user ? user.username : 'User Deleted'}
+				</Card.Header>
 				<Card.Meta as={Link} to={`/posts/${id}`}>
 					{moment(createdAt).fromNow()}
 				</Card.Meta>
@@ -40,7 +41,7 @@ const PostCard = ({ post }) => {
 					</Button>
 				</Tooltip>
 
-				{authUser && authUser.email === user.email && (
+				{authUser && user && authUser.email === user.email && (
 					<DeleteButton postId={id} />
 				)}
 			</Card.Content>

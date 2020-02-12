@@ -1,9 +1,10 @@
 import React from 'react';
-import moment from 'moment';
+
 import { useQuery } from '@apollo/react-hooks';
-import { Button, Checkbox, Icon, Table } from 'semantic-ui-react';
+import { Button, Icon, Table, Transition } from 'semantic-ui-react';
 
 import { LOAD_USERS } from '../../graphql/usersQuery';
+import SingleUser from './SingleUser';
 
 const UsersTable = () => {
 	const { loading, error, data } = useQuery(LOAD_USERS);
@@ -33,27 +34,11 @@ const UsersTable = () => {
 				</Table.Header>
 
 				<Table.Body>
-					{users.map(user => (
-						<Table.Row key={user.id}>
-							<Table.Cell collapsing>
-								<Checkbox slider />
-							</Table.Cell>
-							<Table.Cell>{user.username}</Table.Cell>
-							<Table.Cell>
-								{moment(user.createdAt).format('LL')}
-							</Table.Cell>
-							<Table.Cell>{user.email}</Table.Cell>
-							<Table.Cell>
-								{user.roleType === 1 ? 'Admin' : 'User'}
-							</Table.Cell>
-							<Table.Cell>{user.posts.length}</Table.Cell>
-							<Table.Cell>{user.comments.length}</Table.Cell>
-							<Table.Cell textAlign="center">
-								<Button icon="paw" />
-								<Button icon="delete" />
-							</Table.Cell>
-						</Table.Row>
-					))}
+					<Transition.Group>
+						{users.map(user => (
+							<SingleUser user={user} key={user.id} />
+						))}
+					</Transition.Group>
 				</Table.Body>
 
 				<Table.Footer fullWidth>

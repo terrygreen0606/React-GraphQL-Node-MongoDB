@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const { UserInputError } = require('apollo-server');
+const { UserInputError, AuthenticationError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
 const Post = require('../../models/PostModel');
@@ -149,6 +149,42 @@ module.exports = {
 
 			const token = generateToken(user);
 			return { ...user._doc, id: user.id, token };
+		},
+
+		async deleteUser(_, args, context) {
+			const user = checkAuth(context);
+			try {
+				if (user.roleType !== 1) {
+					throw new AuthenticationError(
+						'Not allowed. You are not the administrator.'
+					);
+				} else {
+					const userTobeDeleted = await User.findById(args.userId);
+					await userTobeDeleted.delete();
+					return 'The user is successfully deleted';
+				}
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+
+		async addAdminRole(_, args, context) {
+			const user = checkAuth(context);
+			try {
+				if (user.roleType !== 1) {
+					throw new AuthenticationError(
+						'Not allowed. You are not the administrator.'
+					);
+				} else {
+					await User.updateOne(
+						{ _id: args.userId },
+						{ $set: { roleType: 1 } }
+					);
+					return 'The user has become an administrator';
+				}
+			} catch (err) {
+				throw new Error(err);
+			}
 		}
 	}
 };

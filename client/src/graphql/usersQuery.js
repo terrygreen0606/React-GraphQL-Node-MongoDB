@@ -64,3 +64,15 @@ export const LOAD_USERS = gql`
 		}
 	}
 `;
+
+export const DELETE_USER = gql`
+	mutation deleteUser($userId: ID!) {
+		deleteUser(userId: $userId)
+	}
+`;
+
+export const ADD_ADMIN_ROLE = gql`
+	mutation addAdminRole($userId: ID!) {
+		addAdminRole(userId: $userId)
+	}
+`;
