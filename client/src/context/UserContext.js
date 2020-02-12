@@ -4,17 +4,22 @@ import jwtDecode from 'jwt-decode';
 const inititalState = {
 	user: null
 };
-if (localStorage.getItem('jwtToken')) {
-	const decodedToken = jwtDecode(localStorage.getItem('jwtToken'));
 
-	// decodedToken.exp = expire time of token
-	// Check if the expire time exceeded now.
-	if (decodedToken.exp * 1000 < Date.now()) {
-		localStorage.removeItem('jwtToken');
-	} else {
-		inititalState.user = decodedToken;
+const decode = () => {
+	if (localStorage.getItem('jwtToken')) {
+		const decodedToken = jwtDecode(localStorage.getItem('jwtToken'));
+
+		// decodedToken.exp = expire time of token
+		// Check if the expire time exceeded now.
+		if (decodedToken.exp * 1000 < Date.now()) {
+			localStorage.removeItem('jwtToken');
+		} else {
+			inititalState.user = decodedToken;
+		}
 	}
-}
+};
+
+decode();
 
 const UserContext = createContext({
 	user: null,
@@ -43,9 +48,10 @@ function UserProvider(props) {
 
 	function login(userData) {
 		localStorage.setItem('jwtToken', userData.token);
+		decode();
 		dispatch({
 			type: 'LOGIN',
-			payload: userData
+			payload: inititalState.user
 		});
 	}
 

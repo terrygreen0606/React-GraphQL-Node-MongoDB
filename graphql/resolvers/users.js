@@ -16,7 +16,8 @@ const generateToken = user => {
 		{
 			id: user.id,
 			email: user.email,
-			username: user.username
+			username: user.username,
+			roleType: user.roleType
 		},
 		config.get('jwtSecret'),
 		{ expiresIn: '1h' }
@@ -29,6 +30,27 @@ module.exports = {
 			try {
 				const posts = await Post.find({ userId: parent.id });
 				return posts;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+		comments: async parent => {
+			try {
+				let comments = [];
+				const posts = await Post.find();
+
+				if (posts.length > 0) {
+					posts.map(post => {
+						if (post.comments.length > 0) {
+							comments = post.comments.filter(
+								comment =>
+									comment.userId.toString() === parent.id
+							);
+						}
+					});
+				}
+
+				return comments;
 			} catch (err) {
 				throw new Error(err);
 			}

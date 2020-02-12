@@ -36,7 +36,7 @@ function App() {
 						path="/profile"
 						component={Profile}
 					/>
-					<Route
+					<ProtectedRoutes
 						exact
 						path="/admin/dashboard"
 						component={Dashboard}

@@ -9,10 +9,10 @@ const WithUserStatus = OriginalComponent => {
 		// HOC to get the user status
 		// userStatus ? 0->not logged in, 9->logged in, but not an admin, 1->admin, <0 -> loading
 		const authUser = useContext(UserContext).user;
-		let userStatus = 0;
 		const { loading, error, data } = useQuery(LOAD_USER, {
 			variables: { userId: authUser.id }
 		});
+		let userStatus = 0;
 
 		if (authUser) {
 			if (error) {

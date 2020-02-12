@@ -1,25 +1,48 @@
-import React from 'react';
-import { Container, Sidebar } from 'semantic-ui-react';
+import React, { useState } from 'react';
+import { Grid, Menu, Segment } from 'semantic-ui-react';
 import UsersTable from './UsersTable';
-import Sidenav from './Sidenav';
 
 const Dashboard = () => {
-	const animation = 'overlay';
-	const direction = 'left';
-	const visible = true;
+	const [activeItem, setActiveItem] = useState('users');
+
+	const handleItemClick = (e, { name }) => setActiveItem(name);
+
 	return (
-		<Container fluid>
-			<Sidebar.Pushable as="div">
-				<Sidenav
-					animation={animation}
-					direction={direction}
-					visible={visible}
-				/>
-				<Sidebar.Pusher>
+		<Grid>
+			<Grid.Row className="page-title">
+				<h1>Dashboard</h1>
+			</Grid.Row>
+			<Grid.Column width={3}>
+				<Menu fluid vertical tabular>
+					<Menu.Item
+						name="users"
+						active={activeItem === 'users'}
+						onClick={handleItemClick}
+					/>
+					<Menu.Item
+						name="pics"
+						active={activeItem === 'pics'}
+						onClick={handleItemClick}
+					/>
+					<Menu.Item
+						name="companies"
+						active={activeItem === 'companies'}
+						onClick={handleItemClick}
+					/>
+					<Menu.Item
+						name="links"
+						active={activeItem === 'links'}
+						onClick={handleItemClick}
+					/>
+				</Menu>
+			</Grid.Column>
+
+			<Grid.Column stretched width={13}>
+				<Segment>
 					<UsersTable />
-				</Sidebar.Pusher>
-			</Sidebar.Pushable>
-		</Container>
+				</Segment>
+			</Grid.Column>
+		</Grid>
 	);
 };
 

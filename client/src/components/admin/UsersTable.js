@@ -1,81 +1,85 @@
 import React from 'react';
+import moment from 'moment';
+import { useQuery } from '@apollo/react-hooks';
 import { Button, Checkbox, Icon, Table } from 'semantic-ui-react';
 
-const UsersTable = () => (
-	<Table celled compact definition>
-		<Table.Header fullWidth>
-			<Table.Row>
-				<Table.HeaderCell />
-				<Table.HeaderCell>Username</Table.HeaderCell>
-				<Table.HeaderCell>Registration Date</Table.HeaderCell>
-				<Table.HeaderCell>E-mail address</Table.HeaderCell>
-				<Table.HeaderCell>Role</Table.HeaderCell>
-				<Table.HeaderCell>Posts</Table.HeaderCell>
-				<Table.HeaderCell>Comments</Table.HeaderCell>
-				<Table.HeaderCell>Actions</Table.HeaderCell>
-			</Table.Row>
-		</Table.Header>
+import { LOAD_USERS } from '../../graphql/usersQuery';
 
-		<Table.Body>
-			<Table.Row>
-				<Table.Cell collapsing>
-					<Checkbox slider />
-				</Table.Cell>
-				<Table.Cell>John Lilki</Table.Cell>
-				<Table.Cell>September 14, 2013</Table.Cell>
-				<Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-				<Table.Cell>Admin</Table.Cell>
-				<Table.Cell>12</Table.Cell>
-				<Table.Cell>243</Table.Cell>
-				<Table.Cell>No</Table.Cell>
-			</Table.Row>
-			<Table.Row>
-				<Table.Cell collapsing>
-					<Checkbox slider />
-				</Table.Cell>
-				<Table.Cell>Jamie Harington</Table.Cell>
-				<Table.Cell>January 11, 2014</Table.Cell>
-				<Table.Cell>jamieharingonton@yahoo.com</Table.Cell>
-				<Table.Cell>Super</Table.Cell>
-				<Table.Cell>25</Table.Cell>
-				<Table.Cell>1</Table.Cell>
-				<Table.Cell>Yes</Table.Cell>
-			</Table.Row>
-			<Table.Row>
-				<Table.Cell collapsing>
-					<Checkbox slider />
-				</Table.Cell>
-				<Table.Cell>Jill Lewis</Table.Cell>
-				<Table.Cell>May 11, 2014</Table.Cell>
-				<Table.Cell>jilsewris22@yahoo.com</Table.Cell>
-				<Table.Cell>User</Table.Cell>
-				<Table.Cell>2</Table.Cell>
-				<Table.Cell>4</Table.Cell>
-				<Table.Cell>Yes</Table.Cell>
-			</Table.Row>
-		</Table.Body>
+const UsersTable = () => {
+	const { loading, error, data } = useQuery(LOAD_USERS);
 
-		<Table.Footer fullWidth>
-			<Table.Row>
-				<Table.HeaderCell />
-				<Table.HeaderCell colSpan="7">
-					<Button
-						floated="right"
-						icon
-						labelPosition="left"
-						primary
-						size="small"
-					>
-						<Icon name="user" /> Add User
-					</Button>
-					<Button size="small">Approve</Button>
-					<Button disabled size="small">
-						Approve All
-					</Button>
-				</Table.HeaderCell>
-			</Table.Row>
-		</Table.Footer>
-	</Table>
-);
+	let table;
+	if (loading) {
+		table = <h1>Loading...</h1>;
+	} else if (error) {
+		table = <h1>Error...</h1>;
+	} else {
+		const users = data.getUsers;
+		table = (
+			<Table celled compact definition>
+				<Table.Header fullWidth>
+					<Table.Row>
+						<Table.HeaderCell />
+						<Table.HeaderCell>Username</Table.HeaderCell>
+						<Table.HeaderCell>Registration Date</Table.HeaderCell>
+						<Table.HeaderCell>E-mail address</Table.HeaderCell>
+						<Table.HeaderCell>Role</Table.HeaderCell>
+						<Table.HeaderCell>Posts</Table.HeaderCell>
+						<Table.HeaderCell>Comments</Table.HeaderCell>
+						<Table.HeaderCell textAlign="center">
+							Actions
+						</Table.HeaderCell>
+					</Table.Row>
+				</Table.Header>
+
+				<Table.Body>
+					{users.map(user => (
+						<Table.Row key={user.id}>
+							<Table.Cell collapsing>
+								<Checkbox slider />
+							</Table.Cell>
+							<Table.Cell>{user.username}</Table.Cell>
+							<Table.Cell>
+								{moment(user.createdAt).format('LL')}
+							</Table.Cell>
+							<Table.Cell>{user.email}</Table.Cell>
+							<Table.Cell>
+								{user.roleType === 1 ? 'Admin' : 'User'}
+							</Table.Cell>
+							<Table.Cell>{user.posts.length}</Table.Cell>
+							<Table.Cell>{user.comments.length}</Table.Cell>
+							<Table.Cell textAlign="center">
+								<Button icon="paw" />
+								<Button icon="delete" />
+							</Table.Cell>
+						</Table.Row>
+					))}
+				</Table.Body>
+
+				<Table.Footer fullWidth>
+					<Table.Row>
+						<Table.HeaderCell />
+						<Table.HeaderCell colSpan="7">
+							<Button
+								floated="right"
+								icon
+								labelPosition="left"
+								primary
+								size="small"
+							>
+								<Icon name="user" /> Add User
+							</Button>
+							<Button size="small">Approve</Button>
+							<Button disabled size="small">
+								Approve All
+							</Button>
+						</Table.HeaderCell>
+					</Table.Row>
+				</Table.Footer>
+			</Table>
+		);
+	}
+	return table;
+};
 
 export default UsersTable;

@@ -13,30 +13,72 @@ const MenuBar = () => {
 
 	const handleItemClick = (e, { name }) => setActiveItem(name);
 
-	const links = user ? (
-		<>
-			<Menu.Menu position="right">
-				<Dropdown
-					text={user.username}
-					pointing
-					className="link item"
-					icon="options"
-				>
-					<Dropdown.Menu>
-						<Dropdown.Item as={Link} to="/profile">
-							<Icon name="user" />
-							Profile
-						</Dropdown.Item>
-						<Dropdown.Item onClick={logout} as={Link} to="/posts">
-							<Icon name="sign-out" />
-							Logout
-						</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
-			</Menu.Menu>
-		</>
-	) : (
-		<>
+	let links;
+	if (user) {
+		if (user.roleType === 1) {
+			links = (
+				<>
+					<Menu.Item
+						name="dashboard"
+						active={activeItem === 'dashboard'}
+						onClick={handleItemClick}
+						as={Link}
+						to="/admin/dashboard"
+					/>
+					<Menu.Menu position="right">
+						<Dropdown
+							text={user.username}
+							pointing
+							className="link item"
+							icon="options"
+						>
+							<Dropdown.Menu>
+								<Dropdown.Item as={Link} to="/profile">
+									<Icon name="user" />
+									Profile
+								</Dropdown.Item>
+								<Dropdown.Item
+									onClick={logout}
+									as={Link}
+									to="/posts"
+								>
+									<Icon name="sign-out" />
+									Logout
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</Menu.Menu>
+				</>
+			);
+		} else {
+			links = (
+				<Menu.Menu position="right">
+					<Dropdown
+						text={user.username}
+						pointing
+						className="link item"
+						icon="options"
+					>
+						<Dropdown.Menu>
+							<Dropdown.Item as={Link} to="/profile">
+								<Icon name="user" />
+								Profile
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={logout}
+								as={Link}
+								to="/posts"
+							>
+								<Icon name="sign-out" />
+								Logout
+							</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
+				</Menu.Menu>
+			);
+		}
+	} else {
+		links = (
 			<Menu.Menu position="right">
 				<Menu.Item
 					name="login"
@@ -53,12 +95,12 @@ const MenuBar = () => {
 					to="/register"
 				/>
 			</Menu.Menu>
-		</>
-	);
+		);
+	}
 
 	// return links;
 	return (
-		<Menu pointing secondary size="massive" color="teal">
+		<Menu secondary size="massive" color="teal" borderless>
 			<Menu.Item
 				name="home"
 				active={activeItem === 'home'}
@@ -72,13 +114,6 @@ const MenuBar = () => {
 				onClick={handleItemClick}
 				as={Link}
 				to="/posts"
-			/>
-			<Menu.Item
-				name="dashboard"
-				active={activeItem === 'dashboard'}
-				onClick={handleItemClick}
-				as={Link}
-				to="/admin/dashboard"
 			/>
 			{links}
 		</Menu>

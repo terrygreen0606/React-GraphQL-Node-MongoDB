@@ -55,6 +55,12 @@ export const LOAD_USERS = gql`
 			email
 			createdAt
 			roleType
+			posts {
+				id
+			}
+			comments {
+				id
+			}
 		}
 	}
 `;
