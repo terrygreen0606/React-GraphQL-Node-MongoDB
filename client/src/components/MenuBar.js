@@ -8,6 +8,7 @@ const MenuBar = () => {
 	const { user, logout } = useContext(UserContext);
 	const pathname = window.location.pathname;
 	const path = pathname === '/' ? 'home' : pathname.substr(1);
+
 	const [activeItem, setActiveItem] = useState(path);
 
 	const handleItemClick = (e, { name }) => setActiveItem(name);
@@ -26,7 +27,7 @@ const MenuBar = () => {
 							<Icon name="user" />
 							Profile
 						</Dropdown.Item>
-						<Dropdown.Item onClick={logout} as={Link} to="/">
+						<Dropdown.Item onClick={logout} as={Link} to="/posts">
 							<Icon name="sign-out" />
 							Logout
 						</Dropdown.Item>
@@ -71,6 +72,13 @@ const MenuBar = () => {
 				onClick={handleItemClick}
 				as={Link}
 				to="/posts"
+			/>
+			<Menu.Item
+				name="dashboard"
+				active={activeItem === 'dashboard'}
+				onClick={handleItemClick}
+				as={Link}
+				to="/admin/dashboard"
 			/>
 			{links}
 		</Menu>

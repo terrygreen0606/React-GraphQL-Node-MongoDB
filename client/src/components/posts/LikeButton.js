@@ -6,18 +6,21 @@ import { Button, Label, Icon } from 'semantic-ui-react';
 import { LIKE_P0ST } from '../../graphql/postsQuery';
 import Tooltip from '../../custom/Tooltip';
 
-const LikeButton = ({ post, user }) => {
+const LikeButton = ({ post, authUser }) => {
 	const { id, likes, likesCount } = post;
 	const [liked, setLiked] = useState(false);
 
 	// If the user is logged in and he liked the post, then...
 	useEffect(() => {
-		if (user && likes.find(like => like.username === user.username)) {
+		if (
+			authUser &&
+			likes.find(like => like.username === authUser.username)
+		) {
 			setLiked(true);
 		} else {
 			setLiked(false);
 		}
-	}, [user, likes]);
+	}, [authUser, likes]);
 
 	const [likePost] = useMutation(LIKE_P0ST, {
 		variables: { postId: id },
@@ -26,7 +29,7 @@ const LikeButton = ({ post, user }) => {
 		}
 	});
 
-	const likeBtn = user ? (
+	const likeBtn = authUser ? (
 		liked ? (
 			<Button color="teal">
 				<Icon name="heart" />

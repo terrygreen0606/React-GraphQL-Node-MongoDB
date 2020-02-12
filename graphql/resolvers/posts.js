@@ -53,8 +53,6 @@ module.exports = {
 			const newPost = new Post({
 				body: args.body,
 				userId: user.id,
-				username: user.username,
-				userEmail: user.email,
 				createdAt: new Date().toISOString()
 			});
 
@@ -72,12 +70,13 @@ module.exports = {
 			// Check if this user has posted this post
 			try {
 				const post = await Post.findById(args.postId);
-				if (user.email === post.userEmail) {
+
+				if (user.id === post.userId.toString()) {
 					await post.delete();
 					return 'Post deleted successfully';
 				} else {
 					throw new AuthenticationError(
-						'Action now allowed. You are not the author of this post'
+						'Action not allowed. You are not the author of this post'
 					);
 				}
 			} catch (err) {

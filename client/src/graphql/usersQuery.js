@@ -42,6 +42,7 @@ export const LOAD_USER = gql`
 		getUser(userId: $userId) {
 			email
 			username
+			roleType
 		}
 	}
 `;

@@ -9,8 +9,8 @@ import DeleteButton from './DeleteButton';
 import Tooltip from '../../custom/Tooltip';
 
 const PostCard = ({ post }) => {
-	const { user } = useContext(UserContext);
-	const { body, createdAt, id, username, userEmail, commentsCount } = post;
+	const authUser = useContext(UserContext).user;
+	const { body, createdAt, id, user, commentsCount } = post;
 
 	return (
 		<Card fluid>
@@ -20,14 +20,14 @@ const PostCard = ({ post }) => {
 					size="mini"
 					src="https://react.semantic-ui.com/images/avatar/large/steve.jpg"
 				/>
-				<Card.Header>{username}</Card.Header>
+				<Card.Header>{user.username}</Card.Header>
 				<Card.Meta as={Link} to={`/posts/${id}`}>
 					{moment(createdAt).fromNow()}
 				</Card.Meta>
 				<Card.Description>{body}</Card.Description>
 			</Card.Content>
 			<Card.Content extra>
-				<LikeButton post={post} user={user} />
+				<LikeButton post={post} authUser={authUser} />
 
 				<Tooltip content="Comment on Post">
 					<Button as={Link} to={`/posts/${id}`} labelPosition="right">
@@ -40,7 +40,7 @@ const PostCard = ({ post }) => {
 					</Button>
 				</Tooltip>
 
-				{user && user.email === userEmail && (
+				{authUser && authUser.email === user.email && (
 					<DeleteButton postId={id} />
 				)}
 			</Card.Content>

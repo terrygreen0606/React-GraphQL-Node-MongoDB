@@ -5,8 +5,11 @@ export const FETCH_POSTS_QUERY = gql`
 		getPosts {
 			id
 			body
-			username
-			userEmail
+			user {
+				id
+				username
+				email
+			}
 			createdAt
 			likesCount
 			likes {
@@ -24,12 +27,15 @@ export const FETCH_POSTS_QUERY = gql`
 `;
 
 export const FETCH_POST_QUERY = gql`
-	query($postId: ID!) {
+	query getPost($postId: ID!) {
 		getPost(postId: $postId) {
 			id
 			body
-			username
-			userEmail
+			user {
+				id
+				username
+				email
+			}
 			createdAt
 			likesCount
 			likes {
@@ -52,8 +58,11 @@ export const ADD_POST = gql`
 			id
 			body
 			createdAt
-			username
-			userEmail
+			user {
+				id
+				username
+				email
+			}
 			likes {
 				id
 				username
