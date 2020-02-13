@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import moment from 'moment';
 import { useMutation } from '@apollo/react-hooks';
 import { Button, Checkbox, Table } from 'semantic-ui-react';
@@ -25,13 +25,9 @@ const SingleUser = ({ user }) => {
 				query: LOAD_USERS,
 				data: { getUsers: usersAfterDeleted }
 			});
-			setDeleteLoading(false);
-			setDeleteDisabled(false);
 		},
 		onError(err) {
 			console.log(err);
-			setDeleteLoading(false);
-			setDeleteDisabled(false);
 		}
 	});
 
@@ -39,30 +35,20 @@ const SingleUser = ({ user }) => {
 		variables: { userId: user.id },
 		update(proxy, result) {
 			console.log(result.data.addAdminRole);
-			setAddLoading(false);
-			setAddDisabled(false);
 		},
 		onError(err) {
 			console.log(err);
-			setAddLoading(false);
-			setAddDisabled(false);
 		}
 	});
 
-	const [active, setActive] = useState(false);
-	const [addLoading, setAddLoading] = useState(false);
-	const [addDisabled, setAddDisabled] = useState(false);
-	const [deleteLoading, setDeleteLoading] = useState(false);
-	const [deleteDisabled, setDeleteDisabled] = useState(false);
-
-	const select = () => {
-		setActive(!active);
+	const selectChecked = () => {
+		console.log('onchange?');
 	};
 
 	return (
-		<Table.Row active={active}>
+		<Table.Row>
 			<Table.Cell collapsing>
-				<Checkbox toggle onChange={select} />
+				<Checkbox toggle onChange={selectChecked} />
 			</Table.Cell>
 			<Table.Cell>{user.username}</Table.Cell>
 			<Table.Cell>{moment(user.createdAt).format('LL')}</Table.Cell>
@@ -74,25 +60,17 @@ const SingleUser = ({ user }) => {
 				<Tooltip content="Add admin role">
 					<Button
 						icon="paw"
-						loading={addLoading}
-						disabled={addDisabled}
 						color="teal"
 						onClick={() => {
 							addAdminRole();
-							setAddLoading(true);
-							setAddDisabled(true);
 						}}
 					/>
 				</Tooltip>
 				<Tooltip content="Delete User">
 					<Button
 						icon="delete"
-						loading={deleteLoading}
-						disabled={deleteDisabled}
 						onClick={() => {
 							deleteUser();
-							setDeleteLoading(true);
-							setDeleteDisabled(true);
 						}}
 						color="red"
 					/>
