@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Menu, Segment } from 'semantic-ui-react';
+import { Grid, Menu } from 'semantic-ui-react';
 import UsersTable from './UsersTable';
 
 const Dashboard = () => {
@@ -20,13 +20,13 @@ const Dashboard = () => {
 						onClick={handleItemClick}
 					/>
 					<Menu.Item
-						name="pics"
-						active={activeItem === 'pics'}
+						name="posts"
+						active={activeItem === 'posts'}
 						onClick={handleItemClick}
 					/>
 					<Menu.Item
-						name="companies"
-						active={activeItem === 'companies'}
+						name="settings"
+						active={activeItem === 'settings'}
 						onClick={handleItemClick}
 					/>
 					<Menu.Item
@@ -38,9 +38,7 @@ const Dashboard = () => {
 			</Grid.Column>
 
 			<Grid.Column stretched width={13}>
-				<Segment>
-					<UsersTable />
-				</Segment>
+				<UsersTable />
 			</Grid.Column>
 		</Grid>
 	);

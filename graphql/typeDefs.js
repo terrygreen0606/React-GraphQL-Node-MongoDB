@@ -54,7 +54,7 @@ module.exports = gql`
 		# RegisterInput and User are custom types above
 		register(registerInput: RegisterInput): User!
 		login(email: String!, password: String!): User!
-		addAdminRole(userId: ID!): String!
+		addRole(userId: ID!, roleType: Int!): String!
 		deleteUser(userId: ID!): String!
 
 		# Create, Delete Post

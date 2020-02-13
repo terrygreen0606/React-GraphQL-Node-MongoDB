@@ -71,8 +71,8 @@ export const DELETE_USER = gql`
 	}
 `;
 
-export const ADD_ADMIN_ROLE = gql`
-	mutation addAdminRole($userId: ID!) {
-		addAdminRole(userId: $userId)
+export const ADD_ROLE = gql`
+	mutation addRole($userId: ID!, $roleType: Int!) {
+		addRole(userId: $userId, roleType: $roleType)
 	}
 `;

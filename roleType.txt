@@ -1,0 +1,5 @@
+roleType Promise
+
+1. Admin
+8. Suspended
+9. User

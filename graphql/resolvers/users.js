@@ -168,7 +168,7 @@ module.exports = {
 			}
 		},
 
-		async addAdminRole(_, args, context) {
+		async addRole(_, args, context) {
 			const user = checkAuth(context);
 			try {
 				if (user.roleType !== 1) {
@@ -178,9 +178,9 @@ module.exports = {
 				} else {
 					await User.updateOne(
 						{ _id: args.userId },
-						{ $set: { roleType: 1 } }
+						{ $set: { roleType: args.roleType } }
 					);
-					return 'The user has become an administrator';
+					return 'Role has been updated';
 				}
 			} catch (err) {
 				throw new Error(err);
