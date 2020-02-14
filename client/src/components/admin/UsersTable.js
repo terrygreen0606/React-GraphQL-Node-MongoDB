@@ -22,8 +22,19 @@ const UsersTable = () => {
 		{ key: 3, text: 'Role', value: 3 }
 	];
 
+	let userIds = [];
+	const select = (selected, userId) => {
+		selected
+			? (userIds = userIds.filter(id => id !== userId))
+			: userIds.push(userId);
+	};
+
 	const selectCategory = (e, { value }) => {
 		console.log(value);
+	};
+
+	const deleteAll = () => {
+		console.log(userIds);
 	};
 
 	let table;
@@ -74,7 +85,11 @@ const UsersTable = () => {
 						<Table.Body>
 							<Transition.Group>
 								{users.map(user => (
-									<SingleUser user={user} key={user.id} />
+									<SingleUser
+										user={user}
+										key={user.id}
+										select={select}
+									/>
 								))}
 							</Transition.Group>
 						</Table.Body>
@@ -93,7 +108,9 @@ const UsersTable = () => {
 										<Icon name="user" /> Add User
 									</Button>
 									<Button size="small">Select all</Button>
-									<Button size="small">Delete All</Button>
+									<Button size="small" onClick={deleteAll}>
+										Delete Selected
+									</Button>
 								</Table.HeaderCell>
 							</Table.Row>
 						</Table.Footer>

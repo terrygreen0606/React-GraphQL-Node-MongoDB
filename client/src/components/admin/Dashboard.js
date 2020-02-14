@@ -15,16 +15,19 @@ const Dashboard = () => {
 			<Grid.Column width={3}>
 				<Menu fluid vertical tabular>
 					<Menu.Item
+						icon="users"
 						name="users"
 						active={activeItem === 'users'}
 						onClick={handleItemClick}
 					/>
 					<Menu.Item
+						icon="list"
 						name="posts"
 						active={activeItem === 'posts'}
 						onClick={handleItemClick}
 					/>
 					<Menu.Item
+						icon="settings"
 						name="settings"
 						active={activeItem === 'settings'}
 						onClick={handleItemClick}

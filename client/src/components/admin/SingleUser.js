@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import 'react-semantic-toasts/styles/react-semantic-alert.css';
 import moment from 'moment';
 import { useMutation } from '@apollo/react-hooks';
 import { Button, Checkbox, Table, Dropdown } from 'semantic-ui-react';
@@ -6,16 +8,23 @@ import { Button, Checkbox, Table, Dropdown } from 'semantic-ui-react';
 import { LOAD_USERS, DELETE_USER, ADD_ROLE } from '../../graphql/usersQuery';
 import Tooltip from '../../custom/Tooltip';
 
-const SingleUser = ({ user }) => {
+const SingleUser = ({ user, select }) => {
 	const options = [
 		{ key: 1, text: 'Make Admin', icon: 'chess king', value: 1 },
 		{ key: 2, text: 'Suspend User', icon: 'ban', value: 8 },
 		{ key: 3, text: 'Make User', icon: 'user', value: 9 }
 	];
 
+	const [suspendedColor, setSuspendedColor] = useState(false);
+	const [adminColor, setAdminColor] = useState(false);
+	useEffect(() => {
+		user.roleType === 8 && setSuspendedColor(true);
+		user.roleType === 1 && setAdminColor(true);
+	}, [setSuspendedColor, user]);
+
 	const [deleteUser] = useMutation(DELETE_USER, {
 		variables: { userId: user.id },
-		update(proxy) {
+		update(proxy, result) {
 			// Remove from cache
 			const data = proxy.readQuery({
 				query: LOAD_USERS
@@ -27,6 +36,15 @@ const SingleUser = ({ user }) => {
 				query: LOAD_USERS,
 				data: { getUsers: usersAfterDeleted }
 			});
+
+			toast({
+				type: 'success',
+				icon: 'alarm',
+				title: 'User Deleted',
+				description: result.data.deleteUser,
+				animation: 'fly up',
+				time: 5000
+			});
 		},
 		onError(err) {
 			console.log(err);
@@ -35,10 +53,17 @@ const SingleUser = ({ user }) => {
 
 	const [addRole] = useMutation(ADD_ROLE, {
 		update(proxy, result) {
-			console.log(result.data.addRole);
+			toast({
+				type: 'success',
+				icon: 'alarm',
+				title: 'Role Change',
+				description: result.data.addRole,
+				animation: 'fly up',
+				time: 5000
+			});
 		},
-		onError(err) {
-			console.log(err);
+		onError({ graphQLErrors, networkError, operation, forward }) {
+			console.log(networkError);
 		}
 	});
 
@@ -46,14 +71,21 @@ const SingleUser = ({ user }) => {
 		addRole({ variables: { userId: user.id, roleType: value } });
 	};
 
+	const [selected, setSelected] = useState(false);
+
 	const selectChecked = () => {
-		console.log('onchange?');
+		setSelected(!selected);
+		select(selected, user.id);
 	};
 
 	return (
-		<Table.Row>
+		<Table.Row
+			active={selected}
+			positive={adminColor}
+			negative={suspendedColor}
+		>
 			<Table.Cell collapsing>
-				<Checkbox toggle onChange={selectChecked} />
+				<Checkbox toggle onChange={selectChecked} checked={selected} />
 			</Table.Cell>
 			<Table.Cell>{user.username}</Table.Cell>
 			<Table.Cell>{moment(user.createdAt).format('LL')}</Table.Cell>
@@ -73,7 +105,9 @@ const SingleUser = ({ user }) => {
 						trigger={<Button icon="paw" color="teal" />}
 						options={options}
 						pointing="top left"
+						selectOnBlur={false}
 						onChange={changeRole}
+						defaultValue={null}
 						icon={null}
 					/>
 				</Tooltip>
@@ -87,6 +121,9 @@ const SingleUser = ({ user }) => {
 					/>
 				</Tooltip>
 			</Table.Cell>
+			<td>
+				<SemanticToastContainer />
+			</td>
 		</Table.Row>
 	);
 };

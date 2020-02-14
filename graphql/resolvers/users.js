@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const mongoose = require('mongoose');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
@@ -162,6 +163,26 @@ module.exports = {
 					const userTobeDeleted = await User.findById(args.userId);
 					await userTobeDeleted.delete();
 					return 'The user is successfully deleted';
+				}
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+
+		async deleteUsers(_, args, context) {
+			const user = checkAuth(context);
+			try {
+				if (user.roleType !== 1) {
+					throw new AuthenticationError(
+						'Not allowed. You are not the administrator.'
+					);
+				} else {
+					// Way to handle async/await in a loop one by one
+					const promises = args.userIds.map(async id => {
+						await User.deleteOne({ _id: id });
+					});
+					await Promise.all(promises);
+					return 'The users are successfully deleted';
 				}
 			} catch (err) {
 				throw new Error(err);

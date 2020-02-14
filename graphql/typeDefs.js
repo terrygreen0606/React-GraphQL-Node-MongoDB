@@ -56,6 +56,7 @@ module.exports = gql`
 		login(email: String!, password: String!): User!
 		addRole(userId: ID!, roleType: Int!): String!
 		deleteUser(userId: ID!): String!
+		deleteUsers(userIds: [String]!): String!
 
 		# Create, Delete Post
 		createPost(body: String!): Post!
