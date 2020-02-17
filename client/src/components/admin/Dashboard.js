@@ -9,9 +9,6 @@ const Dashboard = () => {
 
 	return (
 		<Grid>
-			<Grid.Row className="page-title">
-				<h1>Dashboard</h1>
-			</Grid.Row>
 			<Grid.Column width={3}>
 				<Menu fluid vertical tabular>
 					<Menu.Item

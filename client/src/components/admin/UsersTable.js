@@ -7,7 +7,9 @@ import {
 	Transition,
 	Grid,
 	Input,
-	Dropdown
+	Dropdown,
+	Pagination,
+	Loader
 } from 'semantic-ui-react';
 
 import { LOAD_USERS } from '../../graphql/usersQuery';
@@ -33,13 +35,21 @@ const UsersTable = () => {
 		console.log(value);
 	};
 
+	const selectAll = () => {
+		console.log('clicked select all');
+	};
+
 	const deleteAll = () => {
 		console.log(userIds);
 	};
 
+	const paginate = (e, { activePage }) => {
+		console.log(activePage);
+	};
+
 	let table;
 	if (loading) {
-		table = <h1>Loading...</h1>;
+		table = <Loader size="massive" active inline="centered" />;
 	} else if (error) {
 		table = <h1>Error...</h1>;
 	} else {
@@ -107,7 +117,9 @@ const UsersTable = () => {
 									>
 										<Icon name="user" /> Add User
 									</Button>
-									<Button size="small">Select all</Button>
+									<Button size="small" onClick={selectAll}>
+										Select all
+									</Button>
 									<Button size="small" onClick={deleteAll}>
 										Delete Selected
 									</Button>
@@ -115,6 +127,13 @@ const UsersTable = () => {
 							</Table.Row>
 						</Table.Footer>
 					</Table>
+				</Grid.Row>
+				<Grid.Row centered>
+					<Pagination
+						defaultActivePage={1}
+						totalPages={10}
+						onPageChange={paginate}
+					/>
 				</Grid.Row>
 			</Grid>
 		);

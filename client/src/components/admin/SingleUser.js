@@ -120,10 +120,9 @@ const SingleUser = ({ user, select }) => {
 						color="red"
 					/>
 				</Tooltip>
-			</Table.Cell>
-			<td>
+
 				<SemanticToastContainer />
-			</td>
+			</Table.Cell>
 		</Table.Row>
 	);
 };

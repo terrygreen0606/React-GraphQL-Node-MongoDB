@@ -17,6 +17,7 @@ const server = new ApolloServer({
 
 const port = process.env.PORT || 5000;
 
+const start = new Date().getTime();
 mongoose
 	.connect(db, {
 		useNewUrlParser: true,
@@ -24,6 +25,8 @@ mongoose
 		useUnifiedTopology: true
 	})
 	.then(() => {
+		const end = new Date().getTime();
+		console.log((end - start) / 1000);
 		console.log('Mongodb connected');
 		return server.listen({ port });
 	})
