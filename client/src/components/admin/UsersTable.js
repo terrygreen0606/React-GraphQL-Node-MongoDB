@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import {
 	Button,
@@ -12,11 +12,16 @@ import {
 	Loader
 } from 'semantic-ui-react';
 
-import { LOAD_USERS } from '../../graphql/usersQuery';
+import { LOAD_PAGINATED_USERS } from '../../graphql/usersQuery';
 import SingleUser from './SingleUser';
 
 const UsersTable = () => {
-	const { loading, error, data } = useQuery(LOAD_USERS);
+	const itemsPerPage = 5;
+	const defaultActivePage = 1;
+	const { loading, error, data, fetchMore } = useQuery(LOAD_PAGINATED_USERS, {
+		variables: { itemsPerPage, activePage: defaultActivePage },
+		fetchPolicy: 'cache-and-network'
+	});
 
 	const options = [
 		{ key: 1, text: 'Username', value: 1 },
@@ -43,9 +48,24 @@ const UsersTable = () => {
 		console.log(userIds);
 	};
 
+	const [activePage, setActivePage] = useState(1);
 	const paginate = (e, { activePage }) => {
-		console.log(activePage);
+		setActivePage(activePage);
+		fetchMore({
+			variables: { itemsPerPage, activePage },
+			updateQuery: (prev, { fetchMoreResult }) => {
+				if (!fetchMoreResult) return prev;
+				return Object.assign({}, prev, {
+					getUserInfo: fetchMoreResult.getUserInfo
+				});
+			}
+		}).catch(err => {
+			// Errors like token expired
+			console.log(err);
+		});
 	};
+
+	console.log(data);
 
 	let table;
 	if (loading) {
@@ -53,14 +73,14 @@ const UsersTable = () => {
 	} else if (error) {
 		table = <h1>Error...</h1>;
 	} else {
-		const users = data.getUsers;
+		const { users, total } = data.getUserInfo;
 		table = (
-			<Grid>
-				<Grid.Row>
-					<Grid.Column width={3} floated="right">
+			<Grid divided="vertically">
+				<Grid.Row columns={2}>
+					<Grid.Column>
 						<Input loading icon="user" placeholder="Search..." />
 					</Grid.Column>
-					<Grid.Column width={3}>
+					<Grid.Column>
 						<Dropdown
 							onChange={selectCategory}
 							options={options}
@@ -130,8 +150,8 @@ const UsersTable = () => {
 				</Grid.Row>
 				<Grid.Row centered>
 					<Pagination
-						defaultActivePage={1}
-						totalPages={10}
+						activePage={activePage}
+						totalPages={Math.ceil(total / itemsPerPage)}
 						onPageChange={paginate}
 					/>
 				</Grid.Row>

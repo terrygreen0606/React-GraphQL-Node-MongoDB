@@ -37,7 +37,7 @@ const Dashboard = () => {
 				</Menu>
 			</Grid.Column>
 
-			<Grid.Column stretched width={13}>
+			<Grid.Column stretched width={12}>
 				<UsersTable />
 			</Grid.Column>
 		</Grid>

@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const mongoose = require('mongoose');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
@@ -67,6 +66,7 @@ module.exports = {
 				throw new Error(err);
 			}
 		},
+
 		async getUser(_, args, context) {
 			// Check if the user is logged in with jwt
 			checkAuth(context);
@@ -78,6 +78,21 @@ module.exports = {
 				} else {
 					throw new Error('User not found');
 				}
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
+
+		async getUserInfo(_, args, context) {
+			checkAuth(context);
+			const { itemsPerPage, activePage } = args;
+			try {
+				const users = await User.find()
+					.skip(itemsPerPage * activePage - itemsPerPage)
+					.limit(itemsPerPage)
+					.sort({ createdAt: -1 });
+				const total = await User.countDocuments();
+				return { users, total };
 			} catch (err) {
 				throw new Error(err);
 			}

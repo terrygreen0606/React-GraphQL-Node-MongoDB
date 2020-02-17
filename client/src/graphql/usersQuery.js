@@ -65,6 +65,27 @@ export const LOAD_USERS = gql`
 	}
 `;
 
+export const LOAD_PAGINATED_USERS = gql`
+	query getUserInfo($itemsPerPage: Int!, $activePage: Int!) {
+		getUserInfo(itemsPerPage: $itemsPerPage, activePage: $activePage) {
+			total
+			users {
+				id
+				username
+				email
+				createdAt
+				posts {
+					id
+				}
+				comments {
+					id
+				}
+				roleType
+			}
+		}
+	}
+`;
+
 export const DELETE_USER = gql`
 	mutation deleteUser($userId: ID!) {
 		deleteUser(userId: $userId)

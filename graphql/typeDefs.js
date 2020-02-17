@@ -35,6 +35,10 @@ module.exports = gql`
 		posts: [Post]
 		comments: [Comment]
 	}
+	type UserInfo {
+		users: [User]!
+		total: Int!
+	}
 
 	input RegisterInput {
 		username: String!
@@ -44,6 +48,7 @@ module.exports = gql`
 	}
 
 	type Query {
+		getUserInfo(itemsPerPage: Int!, activePage: Int!): UserInfo!
 		getUsers: [User]
 		getUser(userId: ID!): User
 		getPosts: [Post]

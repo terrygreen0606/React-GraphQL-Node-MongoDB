@@ -8,18 +8,26 @@ module.exports = {
 	Post: {
 		...postsResolvers.Post
 	},
+
 	User: {
 		...usersResolvers.User
 	},
+
+	UserInfo: {
+		...usersResolvers.UserInfo
+	},
+
 	Query: {
 		...usersResolvers.Query,
 		...postsResolvers.Query
 	},
+
 	Mutation: {
 		...usersResolvers.Mutation,
 		...postsResolvers.Mutation,
 		...commentsResolvers.Mutation
 	},
+
 	Subscription: {
 		...postsResolvers.Subscription
 	}
