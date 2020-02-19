@@ -92,8 +92,38 @@ export const DELETE_USER = gql`
 	}
 `;
 
+export const DELETE_USERS = gql`
+	mutation deleteUsers($userIds: [ID!]!) {
+		deleteUsers(userIds: $userIds)
+	}
+`;
+
 export const ADD_ROLE = gql`
 	mutation addRole($userId: ID!, $roleType: Int!) {
 		addRole(userId: $userId, roleType: $roleType)
+	}
+`;
+
+export const ADD_USER = gql`
+	mutation addUser(
+		$username: String!
+		$email: String!
+		$password: String!
+		$roleType: Int!
+	) {
+		addUser(
+			addUserInput: {
+				username: $username
+				email: $email
+				password: $password
+				roleType: $roleType
+			}
+		) {
+			id
+			email
+			username
+			createdAt
+			roleType
+		}
 	}
 `;

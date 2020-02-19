@@ -8,7 +8,8 @@ const Post = require('../../models/PostModel');
 const checkAuth = require('../../utilizers/checkAuth');
 const {
 	validateRegisterInput,
-	validateLoginInput
+	validateLoginInput,
+	validateAddUserInput
 } = require('../../utilizers/validators');
 
 const generateToken = user => {
@@ -186,7 +187,7 @@ module.exports = {
 
 		async deleteUsers(_, args, context) {
 			const user = checkAuth(context);
-			try {
+			if (Array.isArray(args.userIds) && args.userIds.length) {
 				if (user.roleType !== 1) {
 					throw new AuthenticationError(
 						'Not allowed. You are not the administrator.'
@@ -199,8 +200,8 @@ module.exports = {
 					await Promise.all(promises);
 					return 'The users are successfully deleted';
 				}
-			} catch (err) {
-				throw new Error(err);
+			} else {
+				throw new UserInputError('Please select the users to delete');
 			}
 		},
 
@@ -221,6 +222,47 @@ module.exports = {
 			} catch (err) {
 				throw new Error(err);
 			}
+		},
+
+		async addUser(_, args, context) {
+			checkAuth(context);
+			let { username, email, password, roleType } = args.addUserInput;
+
+			// Validate user input
+			const { errors, valid } = validateAddUserInput(args.addUserInput);
+			if (!valid) {
+				throw new UserInputError('Errors', { errors });
+			}
+
+			// Check if the user already exists
+			const isEmail = await User.findOne({ email });
+			if (isEmail) {
+				throw new UserInputError('Email is already taken', {
+					errors: { email: 'This email is already taken' }
+				});
+			}
+
+			const isUsername = await User.findOne({ username });
+			if (isUsername) {
+				throw new UserInputError('Username is already taken', {
+					errors: { username: 'This username is already taken' }
+				});
+			}
+
+			// Hash Password and Create an auth token
+			const salt = await bcrypt.genSalt(10);
+			password = await bcrypt.hash(password, salt);
+
+			const newUser = new User({
+				email,
+				username,
+				password,
+				roleType,
+				createdAt: new Date().toISOString()
+			});
+			const user = await newUser.save();
+
+			return { ...user._doc, id: user.id };
 		}
 	}
 };

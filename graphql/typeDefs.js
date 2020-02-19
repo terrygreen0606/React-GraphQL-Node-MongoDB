@@ -47,6 +47,13 @@ module.exports = gql`
 		confirmPassword: String!
 	}
 
+	input AddUserInput {
+		username: String!
+		email: String!
+		password: String!
+		roleType: Int!
+	}
+
 	type Query {
 		getUserInfo(itemsPerPage: Int!, activePage: Int!): UserInfo!
 		getUsers: [User]
@@ -61,7 +68,8 @@ module.exports = gql`
 		login(email: String!, password: String!): User!
 		addRole(userId: ID!, roleType: Int!): String!
 		deleteUser(userId: ID!): String!
-		deleteUsers(userIds: [String]!): String!
+		deleteUsers(userIds: [ID!]!): String!
+		addUser(addUserInput: AddUserInput!): User!
 
 		# Create, Delete Post
 		createPost(body: String!): Post!

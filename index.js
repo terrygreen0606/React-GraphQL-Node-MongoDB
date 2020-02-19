@@ -8,6 +8,8 @@ const resolvers = require('./graphql/resolvers');
 
 const pubsub = new PubSub();
 
+const start = new Date().getTime();
+
 const server = new ApolloServer({
 	typeDefs,
 	resolvers,
@@ -17,7 +19,6 @@ const server = new ApolloServer({
 
 const port = process.env.PORT || 5000;
 
-const start = new Date().getTime();
 mongoose
 	.connect(db, {
 		useNewUrlParser: true,

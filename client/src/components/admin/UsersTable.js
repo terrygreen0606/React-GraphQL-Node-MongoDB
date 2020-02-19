@@ -1,26 +1,55 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import React, { useState, useContext } from 'react';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import {
 	Button,
-	Icon,
 	Table,
 	Transition,
 	Grid,
 	Input,
 	Dropdown,
 	Pagination,
-	Loader
+	Loader,
+	Modal
 } from 'semantic-ui-react';
+import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import 'react-semantic-toasts/styles/react-semantic-alert.css';
 
-import { LOAD_PAGINATED_USERS } from '../../graphql/usersQuery';
+import AddUserModal from './AddUserModal';
+import { LOAD_PAGINATED_USERS, DELETE_USERS } from '../../graphql/usersQuery';
+import { UserContext } from '../../context/UserContext';
 import SingleUser from './SingleUser';
 
 const UsersTable = () => {
-	const itemsPerPage = 5;
+	const { logout } = useContext(UserContext);
+	const itemsPerPage = 10;
 	const defaultActivePage = 1;
+
 	const { loading, error, data, fetchMore } = useQuery(LOAD_PAGINATED_USERS, {
 		variables: { itemsPerPage, activePage: defaultActivePage },
 		fetchPolicy: 'cache-and-network'
+	});
+
+	const [deleteUsers] = useMutation(DELETE_USERS, {
+		update(_, result) {
+			toast({
+				type: 'success',
+				icon: 'alarm',
+				title: 'Users Deleted',
+				description: `${result.data.deleteUsers}. Refresh to filter.`,
+				animation: 'fly up',
+				time: 5000
+			});
+		},
+		onError(err) {
+			toast({
+				type: 'error',
+				icon: 'alarm',
+				title: 'Users Deleted',
+				description: `${err.graphQLErrors[0].message}`,
+				animation: 'fly up',
+				time: 5000
+			});
+		}
 	});
 
 	const options = [
@@ -29,23 +58,21 @@ const UsersTable = () => {
 		{ key: 3, text: 'Role', value: 3 }
 	];
 
-	let userIds = [];
+	const [userIds, setUserIds] = useState([]);
+	const [allPick, setAllPick] = useState(false);
+
 	const select = (selected, userId) => {
 		selected
-			? (userIds = userIds.filter(id => id !== userId))
-			: userIds.push(userId);
+			? setUserIds(userIds.filter(id => id !== userId))
+			: setUserIds(prev => [...prev, userId]);
 	};
 
 	const selectCategory = (e, { value }) => {
 		console.log(value);
 	};
 
-	const selectAll = () => {
-		console.log('clicked select all');
-	};
-
 	const deleteAll = () => {
-		console.log(userIds);
+		deleteUsers({ variables: { userIds } });
 	};
 
 	const [activePage, setActivePage] = useState(1);
@@ -62,10 +89,19 @@ const UsersTable = () => {
 		}).catch(err => {
 			// Errors like token expired
 			console.log(err);
+			logout();
 		});
 	};
 
-	console.log(data);
+	const [open, setOpen] = useState(false);
+
+	const showModal = () => {
+		setOpen(true);
+	};
+
+	const close = () => {
+		setOpen(false);
+	};
 
 	let table;
 	if (loading) {
@@ -74,6 +110,12 @@ const UsersTable = () => {
 		table = <h1>Error...</h1>;
 	} else {
 		const { users, total } = data.getUserInfo;
+		const selectAll = () => {
+			setAllPick(!allPick);
+			let ids = [];
+			!allPick && users.map(user => ids.push(user.id));
+			setUserIds(ids);
+		};
 		table = (
 			<Grid divided="vertically">
 				<Grid.Row columns={2}>
@@ -119,6 +161,7 @@ const UsersTable = () => {
 										user={user}
 										key={user.id}
 										select={select}
+										allPick={allPick}
 									/>
 								))}
 							</Transition.Group>
@@ -130,17 +173,25 @@ const UsersTable = () => {
 								<Table.HeaderCell colSpan="7">
 									<Button
 										floated="right"
-										icon
-										labelPosition="left"
+										labelPosition="right"
 										primary
 										size="small"
+										onClick={showModal}
+										content="Add User"
+										icon="user"
+									/>
+									<Button
+										size="small"
+										onClick={selectAll}
+										color="teal"
 									>
-										<Icon name="user" /> Add User
+										{allPick ? 'Uncheck All' : 'Select all'}
 									</Button>
-									<Button size="small" onClick={selectAll}>
-										Select all
-									</Button>
-									<Button size="small" onClick={deleteAll}>
+									<Button
+										size="small"
+										onClick={deleteAll}
+										color="red"
+									>
 										Delete Selected
 									</Button>
 								</Table.HeaderCell>
@@ -155,6 +206,18 @@ const UsersTable = () => {
 						onPageChange={paginate}
 					/>
 				</Grid.Row>
+
+				<Modal
+					dimmer="inverted"
+					open={open}
+					closeOnDimmerClick={false}
+					centered={false}
+					onClose={close}
+				>
+					<AddUserModal close={close} />
+				</Modal>
+
+				<SemanticToastContainer />
 			</Grid>
 		);
 	}

@@ -8,7 +8,7 @@ import { Button, Checkbox, Table, Dropdown } from 'semantic-ui-react';
 import { LOAD_USERS, DELETE_USER, ADD_ROLE } from '../../graphql/usersQuery';
 import Tooltip from '../../custom/Tooltip';
 
-const SingleUser = ({ user, select }) => {
+const SingleUser = ({ user, select, allPick }) => {
 	const options = [
 		{ key: 1, text: 'Make Admin', icon: 'chess king', value: 1 },
 		{ key: 2, text: 'Suspend User', icon: 'ban', value: 8 },
@@ -17,10 +17,15 @@ const SingleUser = ({ user, select }) => {
 
 	const [suspendedColor, setSuspendedColor] = useState(false);
 	const [adminColor, setAdminColor] = useState(false);
+	const [selected, setSelected] = useState(false);
 	useEffect(() => {
 		user.roleType === 8 && setSuspendedColor(true);
 		user.roleType === 1 && setAdminColor(true);
 	}, [setSuspendedColor, user]);
+
+	useEffect(() => {
+		setSelected(allPick);
+	}, [allPick]);
 
 	const [deleteUser] = useMutation(DELETE_USER, {
 		variables: { userId: user.id },
@@ -70,8 +75,6 @@ const SingleUser = ({ user, select }) => {
 	const changeRole = (e, { value }) => {
 		addRole({ variables: { userId: user.id, roleType: value } });
 	};
-
-	const [selected, setSelected] = useState(false);
 
 	const selectChecked = () => {
 		setSelected(!selected);

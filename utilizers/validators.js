@@ -43,3 +43,31 @@ module.exports.validateLoginInput = userInputData => {
 
 	return { errors, valid: Object.keys(errors).length < 1 };
 };
+
+module.exports.validateAddUserInput = userInputData => {
+	const { email, username, password, role } = userInputData;
+	const errors = {};
+	if (username.trim() === '') {
+		errors.username = 'Username is required';
+	}
+
+	if (password === '') {
+		errors.password = 'Password is required';
+	}
+
+	if (role === '') {
+		errors.role = 'Select the role';
+	}
+
+	if (email.trim() === '') {
+		errors.email = 'Email is required';
+	} else {
+		// Validate email
+		const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
+		if (!email.match(regEx)) {
+			errors.email = 'Email is invalid';
+		}
+	}
+
+	return { errors, valid: Object.keys(errors).length < 1 };
+};
