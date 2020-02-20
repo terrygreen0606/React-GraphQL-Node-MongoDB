@@ -54,6 +54,14 @@ module.exports = gql`
 		roleType: Int!
 	}
 
+	input EditUserInput {
+		id: ID!
+		username: String!
+		email: String!
+		password: String!
+		roleType: Int!
+	}
+
 	type Query {
 		getUserInfo(itemsPerPage: Int!, activePage: Int!): UserInfo!
 		getUsers: [User]
@@ -66,10 +74,11 @@ module.exports = gql`
 		# RegisterInput and User are custom types above
 		register(registerInput: RegisterInput): User!
 		login(email: String!, password: String!): User!
+		forgotPassword(email: String!): String!
 		addRole(userId: ID!, roleType: Int!): String!
-		deleteUser(userId: ID!): String!
 		deleteUsers(userIds: [ID!]!): String!
 		addUser(addUserInput: AddUserInput!): User!
+		editUser(editUserInput: EditUserInput!): String!
 
 		# Create, Delete Post
 		createPost(body: String!): Post!

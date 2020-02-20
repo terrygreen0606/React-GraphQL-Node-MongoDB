@@ -53,9 +53,10 @@ const UsersTable = () => {
 	});
 
 	const options = [
-		{ key: 1, text: 'Username', value: 1 },
-		{ key: 2, text: 'Email', value: 2 },
-		{ key: 3, text: 'Role', value: 3 }
+		{ key: 1, text: 'All', value: 0 },
+		{ key: 2, text: 'User', value: 9 },
+		{ key: 3, text: 'Suspended', value: 8 },
+		{ key: 4, text: 'Admin', value: 1 }
 	];
 
 	const [userIds, setUserIds] = useState([]);
@@ -127,7 +128,7 @@ const UsersTable = () => {
 							onChange={selectCategory}
 							options={options}
 							selection
-							defaultValue={1}
+							placeholder="Filter by"
 						/>
 					</Grid.Column>
 				</Grid.Row>
@@ -162,6 +163,7 @@ const UsersTable = () => {
 										key={user.id}
 										select={select}
 										allPick={allPick}
+										close={close}
 									/>
 								))}
 							</Transition.Group>
@@ -212,7 +214,6 @@ const UsersTable = () => {
 					open={open}
 					closeOnDimmerClick={false}
 					centered={false}
-					onClose={close}
 				>
 					<AddUserModal close={close} />
 				</Modal>

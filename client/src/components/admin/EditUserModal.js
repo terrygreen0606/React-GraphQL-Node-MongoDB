@@ -1,28 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/react-hooks';
+import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import 'react-semantic-toasts/styles/react-semantic-alert.css';
 import { Modal, Button, Header, Form } from 'semantic-ui-react';
 
-import { ADD_USER } from '../../graphql/usersQuery';
+import { EDIT_USER } from '../../graphql/usersQuery';
 
-const AddUserModal = ({ close }) => {
+const EditUserModal = props => {
 	const options = [
 		{ key: 1, text: 'User', value: 9 },
 		{ key: 2, text: 'Suspended', value: 8 },
 		{ key: 3, text: 'Admin', value: 1 }
 	];
 
-	const [inputData, setInputData] = useState({});
-
+	const [user, setUser] = useState(props.user);
 	const handleChange = (e, { value }) => {
 		const key = e.target.name ? e.target.name : 'roleType';
-		setInputData({ ...inputData, [key]: value });
+		setUser({ ...user, [key]: value });
 	};
 
 	const [errors, setErrors] = useState({});
 
-	const [addNewUser, { loading }] = useMutation(ADD_USER, {
-		update() {
-			close();
+	const [editUser, { loading }] = useMutation(EDIT_USER, {
+		update(_, result) {
+			props.close();
+			toast({
+				type: 'success',
+				icon: 'alarm',
+				title: 'User Updated',
+				description: result.data.editUser,
+				animation: 'fly up',
+				time: 5000
+			});
 		},
 		onError(err) {
 			setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -31,7 +40,10 @@ const AddUserModal = ({ close }) => {
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		addNewUser({ variables: inputData });
+		const { username, email, password, roleType } = user;
+		editUser({
+			variables: { username, email, password, roleType, id: user.id }
+		});
 	};
 
 	return (
@@ -49,6 +61,7 @@ const AddUserModal = ({ close }) => {
 							label="Username"
 							onChange={handleChange}
 							required
+							value={user.username}
 							error={
 								errors.username && {
 									content: errors.username,
@@ -64,6 +77,7 @@ const AddUserModal = ({ close }) => {
 							label="Email"
 							onChange={handleChange}
 							required
+							value={user.email}
 							error={
 								errors.email && {
 									content: errors.email,
@@ -94,6 +108,7 @@ const AddUserModal = ({ close }) => {
 							name="role"
 							onChange={handleChange}
 							required
+							defaultValue={user.roleType}
 							error={
 								errors.roleType && {
 									content: errors.roleType,
@@ -105,21 +120,23 @@ const AddUserModal = ({ close }) => {
 							icon="cancel"
 							labelPosition="right"
 							content="Cancel"
-							onClick={close}
+							onClick={props.close}
 							type="button"
 						/>
 						<Button
 							primary
 							icon="user"
 							labelPosition="right"
-							content="Add User"
+							content="Edit User"
 							type="submit"
 						/>
 					</Form>
 				</Modal.Description>
 			</Modal.Content>
+
+			<SemanticToastContainer />
 		</>
 	);
 };
 
-export default AddUserModal;
+export default EditUserModal;

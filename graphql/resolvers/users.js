@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const crypto = require('crypto');
+const nodeoutlook = require('nodejs-nodemailer-outlook');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
@@ -9,7 +11,8 @@ const checkAuth = require('../../utilizers/checkAuth');
 const {
 	validateRegisterInput,
 	validateLoginInput,
-	validateAddUserInput
+	validateAddUserInput,
+	validateForgotPassword
 } = require('../../utilizers/validators');
 
 const generateToken = user => {
@@ -168,20 +171,66 @@ module.exports = {
 			return { ...user._doc, id: user.id, token };
 		},
 
-		async deleteUser(_, args, context) {
-			const user = checkAuth(context);
-			try {
-				if (user.roleType !== 1) {
-					throw new AuthenticationError(
-						'Not allowed. You are not the administrator.'
-					);
-				} else {
-					const userTobeDeleted = await User.findById(args.userId);
-					await userTobeDeleted.delete();
-					return 'The user is successfully deleted';
-				}
-			} catch (err) {
-				throw new Error(err);
+		async forgotPassword(_, args) {
+			const { errors, valid } = validateForgotPassword(args);
+			if (!valid) {
+				throw new UserInputError('Errors', { errors });
+			}
+
+			const user = await User.findOne({ email: args.email });
+			if (!user) {
+				throw new UserInputError('Errors', {
+					errors: { email: 'That email does not exist.' }
+				});
+			} else {
+				const token = crypto.randomBytes(20).toString('hex');
+				console.log(token);
+
+				await User.updateOne(
+					{ email: args.email },
+					{
+						$set: {
+							resetPasswordToken: token,
+							resetPasswordExpires: Date.now() + 360000
+						}
+					}
+				);
+
+				const promise = new Promise((resolve, reject) => {
+					nodeoutlook.sendEmail({
+						auth: {
+							user: config.get('email.user'),
+							pass: config.get('email.pass')
+						},
+						from: config.get('email.user'),
+						to: user.email,
+						subject: 'Reset Password',
+						text: `To reset password, click the link: http://localhost:3000/reset/${token}`,
+						onError: err => {
+							console.log(
+								'There was an error while sending email.',
+								err
+							);
+							reject(
+								new UserInputError('Errors', {
+									errors: {
+										email:
+											'There caused an error while sending email. Perhaps your email address went wrong.'
+									}
+								})
+							);
+						},
+						onSuccess: response => {
+							console.log('This is the response.', response);
+							resolve(
+								'Recovery Email sent. This email is valid for only an hour. If you can not see the email in your inbox, take a look at Junk email box and click the link there to reset your password.'
+							);
+						}
+					});
+				});
+
+				const result = await promise;
+				return result;
 			}
 		},
 
@@ -263,6 +312,49 @@ module.exports = {
 			const user = await newUser.save();
 
 			return { ...user._doc, id: user.id };
+		},
+
+		async editUser(_, args, context) {
+			checkAuth(context);
+			let {
+				username,
+				email,
+				password,
+				roleType,
+				id
+			} = args.editUserInput;
+
+			// Validate user input
+			const { errors, valid } = validateAddUserInput(args.editUserInput);
+			if (!valid) {
+				throw new UserInputError('Errors', { errors });
+			}
+
+			// Check if the user already exists
+			const isEmail = await User.findOne({ email });
+			if (isEmail) {
+				throw new UserInputError('Email is already taken', {
+					errors: { email: 'This email is already taken' }
+				});
+			}
+
+			const isUsername = await User.findOne({ username });
+			if (isUsername) {
+				throw new UserInputError('Username is already taken', {
+					errors: { username: 'This username is already taken' }
+				});
+			}
+
+			// Hash Password and Create an auth token
+			const salt = await bcrypt.genSalt(10);
+			password = await bcrypt.hash(password, salt);
+
+			await User.updateOne(
+				{ _id: id },
+				{ $set: { username, email, password, roleType } }
+			);
+
+			return 'The user has been updated';
 		}
 	}
 };

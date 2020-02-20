@@ -86,12 +86,6 @@ export const LOAD_PAGINATED_USERS = gql`
 	}
 `;
 
-export const DELETE_USER = gql`
-	mutation deleteUser($userId: ID!) {
-		deleteUser(userId: $userId)
-	}
-`;
-
 export const DELETE_USERS = gql`
 	mutation deleteUsers($userIds: [ID!]!) {
 		deleteUsers(userIds: $userIds)
@@ -101,6 +95,26 @@ export const DELETE_USERS = gql`
 export const ADD_ROLE = gql`
 	mutation addRole($userId: ID!, $roleType: Int!) {
 		addRole(userId: $userId, roleType: $roleType)
+	}
+`;
+
+export const EDIT_USER = gql`
+	mutation editUser(
+		$id: ID!
+		$email: String!
+		$username: String!
+		$password: String!
+		$roleType: Int!
+	) {
+		editUser(
+			editUserInput: {
+				id: $id
+				username: $username
+				email: $email
+				password: $password
+				roleType: $roleType
+			}
+		)
 	}
 `;
 

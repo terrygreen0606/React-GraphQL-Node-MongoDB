@@ -3,9 +3,10 @@ import { SemanticToastContainer, toast } from 'react-semantic-toasts';
 import 'react-semantic-toasts/styles/react-semantic-alert.css';
 import moment from 'moment';
 import { useMutation } from '@apollo/react-hooks';
-import { Button, Checkbox, Table, Dropdown } from 'semantic-ui-react';
+import { Button, Checkbox, Table, Dropdown, Modal } from 'semantic-ui-react';
 
-import { LOAD_USERS, DELETE_USER, ADD_ROLE } from '../../graphql/usersQuery';
+import { ADD_ROLE } from '../../graphql/usersQuery';
+import EditUserModal from './EditUserModal';
 import Tooltip from '../../custom/Tooltip';
 
 const SingleUser = ({ user, select, allPick }) => {
@@ -18,6 +19,16 @@ const SingleUser = ({ user, select, allPick }) => {
 	const [suspendedColor, setSuspendedColor] = useState(false);
 	const [adminColor, setAdminColor] = useState(false);
 	const [selected, setSelected] = useState(false);
+	const [open, setOpen] = useState(false);
+
+	const showModal = () => {
+		setOpen(true);
+	};
+
+	const close = () => {
+		setOpen(false);
+	};
+
 	useEffect(() => {
 		user.roleType === 8 && setSuspendedColor(true);
 		user.roleType === 1 && setAdminColor(true);
@@ -26,35 +37,6 @@ const SingleUser = ({ user, select, allPick }) => {
 	useEffect(() => {
 		setSelected(allPick);
 	}, [allPick]);
-
-	const [deleteUser] = useMutation(DELETE_USER, {
-		variables: { userId: user.id },
-		update(proxy, result) {
-			// Remove from cache
-			const data = proxy.readQuery({
-				query: LOAD_USERS
-			});
-			const usersAfterDeleted = data.getUsers.filter(
-				userFiltered => userFiltered.id !== user.id
-			);
-			proxy.writeQuery({
-				query: LOAD_USERS,
-				data: { getUsers: usersAfterDeleted }
-			});
-
-			toast({
-				type: 'success',
-				icon: 'alarm',
-				title: 'User Deleted',
-				description: result.data.deleteUser,
-				animation: 'fly up',
-				time: 5000
-			});
-		},
-		onError(err) {
-			console.log(err);
-		}
-	});
 
 	const [addRole] = useMutation(ADD_ROLE, {
 		update(proxy, result) {
@@ -114,15 +96,19 @@ const SingleUser = ({ user, select, allPick }) => {
 						icon={null}
 					/>
 				</Tooltip>
-				<Tooltip content="Delete User">
-					<Button
-						icon="delete"
-						onClick={() => {
-							deleteUser();
-						}}
-						color="red"
-					/>
+				<Tooltip content="Edit User">
+					<Button icon="edit" primary onClick={showModal} />
 				</Tooltip>
+
+				<Modal
+					dimmer="inverted"
+					open={open}
+					closeOnDimmerClick={false}
+					centered={false}
+					onClose={close}
+				>
+					<EditUserModal close={close} user={user} />
+				</Modal>
 
 				<SemanticToastContainer />
 			</Table.Cell>

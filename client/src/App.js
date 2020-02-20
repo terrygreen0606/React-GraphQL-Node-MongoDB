@@ -11,6 +11,8 @@ import ProtectedRoutes from './custom/ProtectedRoutes';
 import Posts from './pages/Posts';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import MenuBar from './components/MenuBar';
 import SinglePost from './components/posts/SinglePost';
 import Profile from './components/profile/Profile';
@@ -27,6 +29,16 @@ function App() {
 				<Switch>
 					<AuthRoutes exact path="/login" component={Login} />
 					<AuthRoutes exact path="/register" component={Register} />
+					<AuthRoutes
+						exact
+						path="/forgot"
+						component={ForgotPassword}
+					/>
+					<AuthRoutes
+						exact
+						path="/reset/:token"
+						component={ResetPassword}
+					/>
 
 					<Route exact path="/posts" component={Posts} />
 					<Route exact path="/posts/:postId" component={SinglePost} />

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Form, Button } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Form, Button, Input } from 'semantic-ui-react';
 import { useMutation } from '@apollo/react-hooks';
 
 import { UserContext } from '../context/UserContext';
@@ -61,6 +62,9 @@ const Login = props => {
 				<Button type="submit" primary>
 					Log In
 				</Button>
+				<Input as={Link} to="/forgot">
+					Forgot Password?
+				</Input>
 			</Form>
 
 			{Object.keys(errors).length > 0 && (

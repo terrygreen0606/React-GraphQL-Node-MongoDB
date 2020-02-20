@@ -9,6 +9,14 @@ const UserSchema = new Schema({
 		type: Number,
 		default: 9
 	},
+	resetPasswordToken: {
+		type: String,
+		default: null
+	},
+	resetPasswordExpires: {
+		type: String,
+		default: null
+	},
 	createdAt: String
 });
 
