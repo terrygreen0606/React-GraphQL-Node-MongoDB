@@ -17,6 +17,10 @@ const UserSchema = new Schema({
 		type: String,
 		default: null
 	},
+	verified: {
+		type: Boolean,
+		default: false
+	},
 	createdAt: String
 });
 

@@ -31,6 +31,7 @@ module.exports = gql`
 		email: String!
 		token: String!
 		roleType: Int!
+		verified: Boolean!
 		createdAt: String!
 		posts: [Post]
 		comments: [Comment]
@@ -74,6 +75,8 @@ module.exports = gql`
 		# Register and login User
 		# RegisterInput and User are custom types above
 		register(registerInput: RegisterInput): User!
+		resendLink: String!
+		verifyEmail(token: String!): Boolean!
 		login(email: String!, password: String!): User!
 		forgotPassword(email: String!): String!
 		updatePassword(email: String!, password: String!): String!

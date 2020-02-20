@@ -2,12 +2,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const crypto = require('crypto');
-const nodeoutlook = require('nodejs-nodemailer-outlook');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 
 const User = require('../../models/UserModel');
 const Post = require('../../models/PostModel');
 const checkAuth = require('../../utilizers/checkAuth');
+const sendEmail = require('../../utilizers/sendEmail');
 const {
 	validateRegisterInput,
 	validateLoginInput,
@@ -26,6 +26,15 @@ const generateToken = user => {
 		config.get('jwtSecret'),
 		{ expiresIn: '1h' }
 	);
+};
+
+const checkToken = async token => {
+	const user = await User.findOne({
+		resetPasswordToken: token,
+		resetPasswordExpires: { $gt: Date.now() }
+	});
+
+	return user;
 };
 
 module.exports = {
@@ -103,14 +112,11 @@ module.exports = {
 		},
 
 		async resetPassword(_, args) {
-			const user = await User.findOne({
-				resetPasswordToken: args.token,
-				resetPasswordExpires: { $gt: Date.now() }
-			});
-			if (!user) {
-				return false;
-			} else {
+			const user = await checkToken(args.token);
+			if (user) {
 				return true;
+			} else {
+				return false;
 			}
 		}
 	},
@@ -180,7 +186,36 @@ module.exports = {
 			const user = await newUser.save();
 
 			const token = generateToken(user);
+			user.resetPasswordToken = token;
+			user.resetPasswordExpires = Date.now() + 360000;
+			await user.save();
+
+			await sendEmail(user, token, 'email');
 			return { ...user._doc, id: user.id, token };
+		},
+
+		async resendLink(_, __, context) {
+			const authUser = checkAuth(context);
+			const user = await User.findOne({ email: authUser.email });
+			const token = generateToken(user);
+			user.resetPasswordToken = token;
+			user.resetPasswordExpires = Date.now() + 360000;
+			await user.save();
+
+			return await sendEmail(user, token, 'email');
+		},
+
+		async verifyEmail(_, args) {
+			const user = await checkToken(args.token);
+			if (user) {
+				user.resetPassword = null;
+				user.resetPasswordExpires = null;
+				user.verified = true;
+				await user.save();
+				return true;
+			} else {
+				return false;
+			}
 		},
 
 		async forgotPassword(_, args) {
@@ -196,7 +231,6 @@ module.exports = {
 				});
 			} else {
 				const token = crypto.randomBytes(20).toString('hex');
-				console.log(token);
 
 				await User.updateOne(
 					{ email: args.email },
@@ -208,41 +242,7 @@ module.exports = {
 					}
 				);
 
-				const promise = new Promise((resolve, reject) => {
-					nodeoutlook.sendEmail({
-						auth: {
-							user: config.get('email.user'),
-							pass: config.get('email.pass')
-						},
-						from: config.get('email.user'),
-						to: user.email,
-						subject: 'Reset Password',
-						text: `To reset password, click the link: http://localhost:3000/reset/${token}`,
-						onError: err => {
-							console.log(
-								'There was an error while sending email.',
-								err
-							);
-							reject(
-								new UserInputError('Errors', {
-									errors: {
-										email:
-											'There caused an error while sending email. Perhaps your email address went wrong.'
-									}
-								})
-							);
-						},
-						onSuccess: response => {
-							console.log('This is the response.', response);
-							resolve(
-								'Recovery Email sent. This email is valid for only an hour. If you can not see the email in your inbox, take a look at Junk email box and click the link there to reset your password.'
-							);
-						}
-					});
-				});
-
-				const result = await promise;
-				return result;
+				return await sendEmail(user, token, 'password');
 			}
 		},
 
