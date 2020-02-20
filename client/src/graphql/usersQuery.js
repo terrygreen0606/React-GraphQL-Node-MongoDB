@@ -37,6 +37,24 @@ export const LOGIN_USER = gql`
 	}
 `;
 
+export const FORGOT_PASSWORD = gql`
+	mutation forgotPassword($email: String!) {
+		forgotPassword(email: $email)
+	}
+`;
+
+export const RESET_PASSWORD = gql`
+	query resetPassword($token: String!) {
+		resetPassword(token: $token)
+	}
+`;
+
+export const UPDATE_PASSWORD = gql`
+	mutation updatePassword($email: String!, $password: String!) {
+		updatePassword(email: $email, password: $password)
+	}
+`;
+
 export const LOAD_USER = gql`
 	query getUser($userId: ID!) {
 		getUser(userId: $userId) {

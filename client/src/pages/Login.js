@@ -42,7 +42,6 @@ const Login = props => {
 			>
 				<h1>Log In</h1>
 				<Form.Input
-					label="Email"
 					placeholder="Email"
 					name="email"
 					type="email"
@@ -51,7 +50,6 @@ const Login = props => {
 					onChange={onChange}
 				/>
 				<Form.Input
-					label="Password"
 					placeholder="Password"
 					name="password"
 					type="password"

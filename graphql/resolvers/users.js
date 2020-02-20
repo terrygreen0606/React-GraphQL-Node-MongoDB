@@ -100,6 +100,18 @@ module.exports = {
 			} catch (err) {
 				throw new Error(err);
 			}
+		},
+
+		async resetPassword(_, args) {
+			const user = await User.findOne({
+				resetPasswordToken: args.token,
+				resetPasswordExpires: { $gt: Date.now() }
+			});
+			if (!user) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 	},
 	Mutation: {
@@ -231,6 +243,26 @@ module.exports = {
 
 				const result = await promise;
 				return result;
+			}
+		},
+
+		async updatePassword(_, args) {
+			let { email, password } = args;
+			const { errors, valid } = validateLoginInput(args);
+			if (!valid) {
+				throw new UserInputError('Errors', { errors });
+			}
+
+			const user = await User.findOne({ email });
+			if (user) {
+				const salt = await bcrypt.genSalt(10);
+				user.password = await bcrypt.hash(password, salt);
+				user.resetPasswordToken = null;
+				user.resetPasswordExpires = null;
+				await user.save();
+				return 'The password is updated';
+			} else {
+				return 'That email is not the registered one in our system.';
 			}
 		},
 

@@ -1,38 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import 'react-semantic-toasts/styles/react-semantic-alert.css';
 import { Form, Button } from 'semantic-ui-react';
 
 import { useForm } from '../custom/userCustom';
+import { RESET_PASSWORD, UPDATE_PASSWORD } from '../graphql/usersQuery';
 
 const ForgotPassword = props => {
-	const { onChange, onSubmit, values } = useForm(resetPassword, {
+	const { onChange, onSubmit, values } = useForm(updatePassword, {
 		email: '',
 		password: ''
 	});
+
+	const { loading, data, error } = useQuery(RESET_PASSWORD, {
+		variables: { token: props.match.params.token }
+	});
+
+	const [update, updating] = useMutation(UPDATE_PASSWORD, {
+		update(_, result) {
+			toast({
+				type: 'success',
+				icon: 'alarm',
+				title: 'User Updated',
+				description: result.data.updatePassword,
+				animation: 'fly up',
+				time: 3000
+			});
+			setTimeout(() => {
+				props.history.push('/login');
+			}, 3000);
+		},
+		onError(err) {
+			toast({
+				type: 'error',
+				icon: 'alarm',
+				title: 'User Updated',
+				description: 'Error occurred updating your password',
+				animation: 'fly up',
+				time: 5000
+			});
+		}
+	});
+
 	const [errors, setErrors] = useState({});
+	const [disabled, setDisabled] = useState(false);
+	useEffect(() => {
+		if (data) {
+			data.resetPassword ? setDisabled(false) : setDisabled(true);
+		}
+	}, [data]);
 
-	// const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-	// 	// Comes from graphql server
-	// 	update(proxy, result) {
-	// 		context.login(result.data.login);
-	// 		props.history.push('/posts');
-	// 	},
-	// 	onError(err) {
-	// 		console.log(err.graphQLErrors[0]);
-	// 		// console.log(err.graphQLErrors[0].extensions.exception.errors);
-	// 		setErrors(err.graphQLErrors[0].extensions.exception.errors);
-	// 	},
-	// 	variables: values
-	// });
+	let invalidLink = disabled ? (
+		<div className="ui error message">
+			<ul className="list">
+				<li>This link is invalid or expired.</li>
+			</ul>
+		</div>
+	) : null;
 
-	function resetPassword() {
-		console.log(values);
-		// loginUser();
-		console.log('forgot password called?');
+	if (error) {
+		setErrors(error.graphQLErrors[0].extensions.errors.email);
+	}
+
+	function updatePassword() {
+		update({ variables: values });
 	}
 
 	return (
 		<div className="form-container">
-			<Form onSubmit={onSubmit}>
+			{invalidLink}
+			<Form onSubmit={onSubmit} loading={loading || updating.loading}>
 				<h1>Reset Password</h1>
 				<Form.Input
 					placeholder="Email"
@@ -52,7 +90,7 @@ const ForgotPassword = props => {
 					onChange={onChange}
 					required
 				/>
-				<Button type="submit" primary>
+				<Button type="submit" primary disabled={disabled}>
 					Reset Password
 				</Button>
 			</Form>
@@ -66,6 +104,8 @@ const ForgotPassword = props => {
 					</ul>
 				</div>
 			)}
+
+			<SemanticToastContainer />
 		</div>
 	);
 };

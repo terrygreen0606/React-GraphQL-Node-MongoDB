@@ -41,7 +41,6 @@ const Register = props => {
 			>
 				<h1>Register</h1>
 				<Form.Input
-					label="Username"
 					placeholder="Username"
 					name="username"
 					type="text"
@@ -50,7 +49,6 @@ const Register = props => {
 					onChange={onChange}
 				/>
 				<Form.Input
-					label="Email"
 					placeholder="Email"
 					name="email"
 					type="email"
@@ -59,7 +57,6 @@ const Register = props => {
 					onChange={onChange}
 				/>
 				<Form.Input
-					label="Password"
 					placeholder="Password"
 					name="password"
 					type="password"
@@ -68,7 +65,6 @@ const Register = props => {
 					onChange={onChange}
 				/>
 				<Form.Input
-					label="Confirm Password"
 					placeholder="Confirm Password"
 					name="confirmPassword"
 					type="password"

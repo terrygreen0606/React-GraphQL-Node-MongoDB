@@ -1,37 +1,42 @@
 import React, { useState } from 'react';
+import { useMutation } from '@apollo/react-hooks';
 import { Form, Button } from 'semantic-ui-react';
+import { SemanticToastContainer, toast } from 'react-semantic-toasts';
+import 'react-semantic-toasts/styles/react-semantic-alert.css';
 
 import { useForm } from '../custom/userCustom';
+import { FORGOT_PASSWORD } from '../graphql/usersQuery';
 
-const ForgotPassword = props => {
+const ForgotPassword = () => {
 	const { onChange, onSubmit, values } = useForm(forgotPassword, {
 		email: ''
 	});
 	const [errors, setErrors] = useState({});
 
-	// const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-	// 	// Comes from graphql server
-	// 	update(proxy, result) {
-	// 		context.login(result.data.login);
-	// 		props.history.push('/posts');
-	// 	},
-	// 	onError(err) {
-	// 		console.log(err.graphQLErrors[0]);
-	// 		// console.log(err.graphQLErrors[0].extensions.exception.errors);
-	// 		setErrors(err.graphQLErrors[0].extensions.exception.errors);
-	// 	},
-	// 	variables: values
-	// });
+	const [forgot, { loading }] = useMutation(FORGOT_PASSWORD, {
+		variables: { email: values.email },
+		update(_, result) {
+			toast({
+				type: 'success',
+				icon: 'alarm',
+				title: 'User Updated',
+				description: result.data.forgotPassword,
+				animation: 'fly up',
+				time: 5000
+			});
+		},
+		onError(err) {
+			setErrors(err.graphQLErrors[0].errors.email);
+		}
+	});
 
 	function forgotPassword() {
-		console.log(values);
-		// loginUser();
-		console.log('forgot password called?');
+		forgot();
 	}
 
 	return (
 		<div className="form-container">
-			<Form onSubmit={onSubmit}>
+			<Form onSubmit={onSubmit} loading={loading}>
 				<h1>Send email Link</h1>
 				<Form.Input
 					placeholder="Email"
@@ -56,6 +61,8 @@ const ForgotPassword = props => {
 					</ul>
 				</div>
 			)}
+
+			<SemanticToastContainer />
 		</div>
 	);
 };

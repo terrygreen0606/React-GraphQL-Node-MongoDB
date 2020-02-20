@@ -68,6 +68,7 @@ module.exports = gql`
 		getUser(userId: ID!): User
 		getPosts: [Post]
 		getPost(postId: ID!): Post
+		resetPassword(token: String!): Boolean!
 	}
 	type Mutation {
 		# Register and login User
@@ -75,6 +76,7 @@ module.exports = gql`
 		register(registerInput: RegisterInput): User!
 		login(email: String!, password: String!): User!
 		forgotPassword(email: String!): String!
+		updatePassword(email: String!, password: String!): String!
 		addRole(userId: ID!, roleType: Int!): String!
 		deleteUsers(userIds: [ID!]!): String!
 		addUser(addUserInput: AddUserInput!): User!
