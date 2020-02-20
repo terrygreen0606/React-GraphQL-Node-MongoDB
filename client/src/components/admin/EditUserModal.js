@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { SemanticToastContainer, toast } from 'react-semantic-toasts';
-import 'react-semantic-toasts/styles/react-semantic-alert.css';
 import { Modal, Button, Header, Form } from 'semantic-ui-react';
 
 import { EDIT_USER } from '../../graphql/usersQuery';

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { SemanticToastContainer, toast } from 'react-semantic-toasts';
-import 'react-semantic-toasts/styles/react-semantic-alert.css';
 import moment from 'moment';
 import { useMutation } from '@apollo/react-hooks';
 import { Button, Checkbox, Table, Dropdown, Modal } from 'semantic-ui-react';

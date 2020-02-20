@@ -11,6 +11,13 @@ import Tooltip from '../../custom/Tooltip';
 const PostCard = ({ post }) => {
 	const authUser = useContext(UserContext).user;
 	const { body, createdAt, id, user, commentsCount } = post;
+
+	let deleteButton =
+		(authUser && authUser.roleType === 1) ||
+		(authUser && user && user.email === authUser.email) ? (
+			<DeleteButton postId={id} />
+		) : null;
+
 	return (
 		<Card fluid>
 			<Card.Content>
@@ -41,9 +48,7 @@ const PostCard = ({ post }) => {
 					</Button>
 				</Tooltip>
 
-				{authUser && user && authUser.email === user.email && (
-					<DeleteButton postId={id} />
-				)}
+				{deleteButton}
 			</Card.Content>
 		</Card>
 	);

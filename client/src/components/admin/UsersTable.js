@@ -12,7 +12,6 @@ import {
 	Modal
 } from 'semantic-ui-react';
 import { SemanticToastContainer, toast } from 'react-semantic-toasts';
-import 'react-semantic-toasts/styles/react-semantic-alert.css';
 
 import AddUserModal from './AddUserModal';
 import { LOAD_PAGINATED_USERS, DELETE_USERS } from '../../graphql/usersQuery';
@@ -45,7 +44,7 @@ const UsersTable = () => {
 				type: 'error',
 				icon: 'alarm',
 				title: 'Users Deleted',
-				description: `${err.graphQLErrors[0].message}`,
+				description: err.graphQLErrors[0].message,
 				animation: 'fly up',
 				time: 5000
 			});
