@@ -194,6 +194,7 @@ module.exports = {
 			return { ...user._doc, id: user.id, token };
 		},
 
+		// Resend email verification link
 		async resendLink(_, __, context) {
 			const authUser = checkAuth(context);
 			const user = await User.findOne({ email: authUser.email });

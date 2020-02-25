@@ -18,6 +18,7 @@ import MenuBar from './components/MenuBar';
 import SinglePost from './components/posts/SinglePost';
 import Profile from './components/profile/Profile';
 import Dashboard from './components/admin/Dashboard';
+import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
 	return (
@@ -39,6 +40,11 @@ function App() {
 						exact
 						path="/reset/:token"
 						component={ResetPassword}
+					/>
+					<AuthRoutes
+						exact
+						path="/verify/:token"
+						component={VerifyEmail}
 					/>
 
 					<Route exact path="/posts" component={Posts} />

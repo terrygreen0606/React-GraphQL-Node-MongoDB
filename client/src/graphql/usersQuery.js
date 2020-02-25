@@ -55,6 +55,12 @@ export const UPDATE_PASSWORD = gql`
 	}
 `;
 
+export const VERIFY_EMAIL = gql`
+	mutation verifyEmail($token: String!) {
+		verifyEmail(token: $token)
+	}
+`;
+
 export const LOAD_USER = gql`
 	query getUser($userId: ID!) {
 		getUser(userId: $userId) {
