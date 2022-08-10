@@ -20,6 +20,6 @@
 		"graphql": "^14.6.0",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.8.11",
-		"nodejs-nodemailer-outlook": "^1.2.1"
+		"nodejs-nodemailer-outlook": "^1.2.4"
 	}
 }
